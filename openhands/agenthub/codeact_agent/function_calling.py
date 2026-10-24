@@ -12,7 +12,10 @@ from litellm import (
     ModelResponse,
 )
 
-from openhands.core.exceptions import FunctionCallNotExistsError
+from openhands.core.exceptions import (
+    FunctionCallNotExistsError,
+    FunctionCallValidationError,
+)
 from openhands.core.logger import openhands_logger as logger
 from openhands.events.action import (
     Action,
@@ -481,12 +484,25 @@ def response_to_actions(response: ModelResponse) -> list[Action]:
         # Process each tool call to OpenHands action
         for i, tool_call in enumerate(assistant_msg.tool_calls):
             action: Action
+            if not tool_call.function.name or not tool_call.function.name.strip():
+                raise FunctionCallValidationError(
+                    'Tool call has an empty function name. Retry with a registered '
+                    'tool name and a JSON object containing its required arguments.'
+                )
             try:
                 arguments = json.loads(tool_call.function.arguments)
-            except json.decoder.JSONDecodeError as e:
-                raise RuntimeError(
-                    f'Failed to parse tool call arguments: {tool_call.function.arguments}'
+            except (json.decoder.JSONDecodeError, TypeError) as e:
+                # The controller reports validation failures to the model and
+                # continues within the existing iteration limit.
+                raise FunctionCallValidationError(
+                    f'Arguments for tool {tool_call.function.name} must be valid '
+                    'JSON. Retry the tool call with a complete JSON object.'
                 ) from e
+            if not isinstance(arguments, dict):
+                raise FunctionCallValidationError(
+                    f'Arguments for tool {tool_call.function.name} must be a JSON '
+                    'object. Retry with the required named arguments.'
+                )
             if tool_call.function.name == 'execute_bash':
                 action = CmdRunAction(**arguments)
             elif tool_call.function.name == 'execute_ipython_cell':
