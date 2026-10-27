@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+from pathlib import Path
 import tempfile
 from typing import Any
 
@@ -9,6 +10,12 @@ import pandas as pd
 import toml
 
 import openhands.agenthub
+from evaluation.utils.interaction_runtime import (
+    close_runtime_bounded,
+    extract_local_patch,
+    guard_busy_shell,
+    run_controller_bounded_cleanup,
+)
 from evaluation.utils.shared import (
     EvalException,
     EvalMetadata,
@@ -41,12 +48,15 @@ USE_INSTANCE_IMAGE = os.environ.get('USE_INSTANCE_IMAGE', 'false').lower() == 't
 RUN_WITH_BROWSING = os.environ.get('RUN_WITH_BROWSING', 'false').lower() == 'false'
 
 client = openai.OpenAI(
-    api_key=os.environ['API_KEY'],
+    api_key=os.environ.get('INTERACTION_USER_API_KEY') or os.environ['API_KEY'],
+    base_url=os.environ.get('INTERACTION_USER_BASE_URL'),
+    timeout=180,
+    max_retries=2,
 )
 
 
 class FakeUser:
-    def __init__(self, issue, hints, files):
+    def __init__(self, issue, hints, files, log_path=None):
         self.system_message = f"""
         You are a GitHub user reporting an issue. Here are the details of your issue and environment:
 
@@ -66,18 +76,35 @@ class FakeUser:
         """
         self.chat_history = [{'role': 'system', 'content': self.system_message}]
         self.turns = 0
+        self.interactions = []
+        self.log_path = Path(log_path) if log_path else None
 
     def generate_reply(self, question):
-        if self.turns > 3:
+        if self.turns >= 3:
             return 'Please continue working on the task. Do NOT ask for more help.'
         self.chat_history.append({'role': 'user', 'content': question.content})
         response = client.chat.completions.create(
-            model='gpt-4o-2024-05-13', messages=self.chat_history
+            model=os.environ.get('INTERACTION_USER_MODEL', 'gpt-4o-2024-05-13'),
+            messages=self.chat_history,
+            temperature=float(os.environ.get('INTERACTION_USER_TEMPERATURE', '0')),
+            top_p=float(os.environ.get('INTERACTION_USER_TOP_P', '1')),
         )
 
         reply = response.choices[0].message.content
+        if not isinstance(reply, str) or not reply.strip():
+            raise RuntimeError('Simulated user returned an empty answer')
         self.chat_history.append({'role': 'assistant', 'content': reply})
         self.turns += 1
+        self.interactions.append({
+            'turn': self.turns,
+            'question': question.content,
+            'answer': reply,
+            'model': response.model,
+            'usage': response.usage.model_dump() if response.usage else None,
+        })
+        if self.log_path:
+            self.log_path.parent.mkdir(parents=True, exist_ok=True)
+            self.log_path.write_text(json.dumps(self.interactions, ensure_ascii=False, indent=2))
         return reply
 
 
@@ -193,6 +220,7 @@ def get_config(
             base_container_image=base_container_image,
             enable_auto_lint=True,
             use_host_network=False,
+            docker_runtime_kwargs=json.loads(os.environ.get('DOCKER_RUNTIME_KWARGS', 'null')),
             # large enough timeout, since some testcases take very long to run
             timeout=300,
             # Add platform to the sandbox config to solve issue 4401
@@ -413,10 +441,13 @@ def complete_runtime(
 
     n_retries = 0
     git_patch = None
+    patch_end_marker = '__OPENHANDS_PATCH_END__'
     while n_retries < 5:
         action = CmdRunAction(
-            command=f'git diff --no-color --cached {instance["base_commit"]}',
-            keep_prompt=False,
+            command=(
+                f'git diff --no-color --cached {instance["base_commit"]} && '
+                f'printf %s {patch_end_marker}'
+            ),
         )
         action.timeout = 600 + 100 * n_retries
         logger.info(action, extra={'msg_type': 'ACTION'})
@@ -425,7 +456,9 @@ def complete_runtime(
         n_retries += 1
         if isinstance(obs, CmdOutputObservation):
             if obs.exit_code == 0:
-                git_patch = obs.content.strip()
+                if not obs.content.endswith(patch_end_marker):
+                    raise RuntimeError('Git patch end marker missing from runtime output')
+                git_patch = obs.content[:-len(patch_end_marker)]
                 break
             else:
                 logger.info('Failed to get git diff, retrying...')
@@ -451,7 +484,10 @@ def process_instance(
     global fake_user
     original_issue = instance.original_issue
     issue = str(original_issue)
-    fake_user = FakeUser(issue=issue, hints=instance.hints_text, files=instance.files)
+    fake_user = FakeUser(
+        issue=issue, hints=instance.hints_text, files=instance.files,
+        log_path=Path(metadata.eval_output_dir) / 'interaction_logs' / f'{instance.instance_id}.json',
+    )
     # Setup the logger properly, so you can run multi-processing to parallelize the evaluation
     if reset_logger:
         log_dir = os.path.join(metadata.eval_output_dir, 'infer_logs')
@@ -464,11 +500,12 @@ def process_instance(
 
     try:
         initialize_runtime(runtime, instance)
+        guard_busy_shell(runtime)
 
         instruction = get_instruction(instance, metadata)
 
         # Here's how you can run the agent (similar to the `main` function) and get the final task state
-        state: State | None = asyncio.run(
+        state: State | None = run_controller_bounded_cleanup(
             run_controller(
                 config=config,
                 initial_user_action=MessageAction(content=instruction),
@@ -488,13 +525,23 @@ def process_instance(
             raise EvalException('Fatal error detected: ' + state.last_error)
         # ======= THIS IS SWE-Bench specific =======
         # Get git patch
-        return_val = complete_runtime(runtime, instance)
-        git_patch = return_val['git_patch']
+        finalization_error = None
+        try:
+            return_val = (
+                extract_local_patch(runtime, instance)
+                if getattr(runtime, 'container', None) is not None
+                else complete_runtime(runtime, instance)
+            )
+            git_patch = return_val['git_patch']
+        except Exception as error:
+            finalization_error = f'Patch extraction failed: {type(error).__name__}: {error}'
+            logger.exception('Keeping interaction records after patch extraction failure')
+            git_patch = None
         logger.info(
             f'Got git diff for instance {instance.instance_id}:\n--------\n{git_patch}\n--------'
         )
     finally:
-        runtime.close()
+        cleanup_error = close_runtime_bounded(runtime)
     # ==========================================
 
     # ======= Attempt to evaluate the agent's edits =======
@@ -502,6 +549,9 @@ def process_instance(
     # because the agent may alter the environment / testcases
     test_result = {
         'git_patch': git_patch,
+        'interactions': fake_user.interactions,
+        'cleanup_error': cleanup_error,
+        'finalization_error': finalization_error,
     }
 
     # If you are working on some simpler benchmark that only evaluates the final model output (e.g., in a MessageAction)
@@ -514,13 +564,14 @@ def process_instance(
     # Save the output
     output = EvalOutput(
         instance_id=instance.instance_id,
+        num_turns=len(fake_user.interactions),
         instruction=instruction,
         instance=instance.to_dict(),  # SWE Bench specific
         test_result=test_result,
         metadata=metadata,
         history=histories,
         metrics=metrics,
-        error=state.last_error if state and state.last_error else None,
+        error=state.last_error or finalization_error or cleanup_error or None,
     )
     return output
 
@@ -579,7 +630,15 @@ if __name__ == '__main__':
     if llm_config is None:
         raise ValueError(f'Could not find LLM config: --llm_config {args.llm_config}')
 
-    details = {}
+    details = {
+        'user_proxy_model': os.environ.get('INTERACTION_USER_MODEL', 'gpt-4o-2024-05-13'),
+        'user_proxy_base_url': os.environ.get('INTERACTION_USER_BASE_URL'),
+        'max_user_proxy_turns': 3,
+        'runtime_finalization_policy': 'bounded-cleanup-independent-docker-exec-v1',
+        'busy_shell_policy': 'poll-or-interrupt-before-new-command',
+        'use_instance_image': USE_INSTANCE_IMAGE,
+        'run_with_browsing_internal_flag': RUN_WITH_BROWSING,
+    }
     _agent_cls = openhands.agenthub.Agent.get_cls(args.agent_cls)
     dataset_descrption = (
         args.dataset.replace('/', '__') + '-' + args.split.replace('/', '__')
