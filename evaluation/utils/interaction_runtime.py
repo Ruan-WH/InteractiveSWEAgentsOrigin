@@ -64,6 +64,7 @@ def extract_local_patch(runtime, instance, timeout=60):
     if container is None:
         raise ValueError('Independent patch extraction requires a local Docker container')
     repo = '/workspace/' + f'{instance.repo}__{instance.version}'.replace('/', '__')
+    repo = getattr(runtime, 'swebench_workspace_dir', repo)
     # Quoting also protects repository names/base SHAs from shell interpretation.
     script = (
         'git add -A && git -c core.pager=cat diff --binary '

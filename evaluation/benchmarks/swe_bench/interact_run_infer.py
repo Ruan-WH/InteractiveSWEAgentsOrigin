@@ -172,6 +172,24 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
             "Your thinking should be thorough and so it's fine if it's very long.\n"
         )
 
+    prompt_variant = os.environ.get('INTERACTION_PROMPT_VARIANT', 'original')
+    if prompt_variant == 'targeted-v1':
+        instruction += (
+            '\n<clarification_rules>\n'
+            '1. Every message sent to the user must contain a specific clarification question that needs an answer. '
+            'Put progress updates about reading code, editing, or testing in tool-call explanations instead.\n'
+            '2. Before asking, identify the missing fact and how different answers would affect your implementation or verification.\n'
+            '3. Prioritize facts the repository cannot establish: concrete reproduction inputs, actual versus expected behavior, '
+            'compatibility requirements, and the final decision in any issue discussion. Inspect the repository yourself for implementation details.\n'
+            '4. Focus each exchange on one important uncertainty; closely related subquestions are allowed. Do not repeat answered questions.\n'
+            '5. After receiving an answer, incorporate relevant information into an implementation choice or reproduction check. '
+            'If it cannot be used, explain why in your tool-call explanation.\n'
+            '6. You may interact at most three times and need not use every exchange. Continue working when no consequential information gap remains.\n'
+            '</clarification_rules>\n'
+        )
+    elif prompt_variant != 'original':
+        raise ValueError(f'Unknown interaction prompt variant: {prompt_variant}')
+
     if RUN_WITH_BROWSING:
         instruction += (
             '<IMPORTANT!>\n'
@@ -347,6 +365,7 @@ def initialize_runtime(
         assert (
             obs.exit_code == 0
         ), f'Failed to source /swe_util/swe_entry.sh: {obs.content}'
+    actual_workspace_dir_name = workspace_dir_name
     try:
         action = CmdRunAction(command=f'cd /workspace/{workspace_dir_name}')
         action.timeout = 600
@@ -362,11 +381,13 @@ def initialize_runtime(
         obs = runtime.run_action(action)
         logger.info(obs, extra={'msg_type': 'OBSERVATION'})
         assert obs.exit_code == 0
+        actual_workspace_dir_name = alt_name
     if obs.exit_code != 0:
         logger.error(f'Command failed with exit code {obs.exit_code}: {obs.content}')
         # Handle the error appropriately, maybe by raising a custom exception
         raise RuntimeError(f'Failed to initialize runtime: {obs.content}')
     assert obs.exit_code == 0
+    runtime.swebench_workspace_dir = f'/workspace/{actual_workspace_dir_name}'
 
     action = CmdRunAction(command='git reset --hard')
     action.timeout = 600
@@ -631,6 +652,7 @@ if __name__ == '__main__':
         raise ValueError(f'Could not find LLM config: --llm_config {args.llm_config}')
 
     details = {
+        'interaction_prompt_variant': os.environ.get('INTERACTION_PROMPT_VARIANT', 'original'),
         'user_proxy_model': os.environ.get('INTERACTION_USER_MODEL', 'gpt-4o-2024-05-13'),
         'user_proxy_base_url': os.environ.get('INTERACTION_USER_BASE_URL'),
         'max_user_proxy_turns': 3,

@@ -21,6 +21,10 @@ DEFAULT_IDS = [
 
 
 def prepare_environment(settings):
+    bypass = set(filter(None, (os.environ.get('NO_PROXY', '') + ','
+                              + os.environ.get('no_proxy', '')).split(',')))
+    bypass.update(('localhost', '127.0.0.1', '::1'))
+    os.environ['NO_PROXY'] = os.environ['no_proxy'] = ','.join(sorted(bypass))
     for name in ('HTTP_PROXY', 'HTTPS_PROXY', 'ALL_PROXY',
                  'http_proxy', 'https_proxy', 'all_proxy'):
         value = os.environ.get(name, '')
@@ -78,6 +82,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--samples', type=int, choices=(3, 4, 5), default=3)
     parser.add_argument('--check-only', action='store_true')
+    parser.add_argument('--prompt-variant', choices=('original', 'targeted-v1'), default='original')
     args, extra = parser.parse_known_args()
     project = Path(__file__).resolve().parents[4]
     os.chdir(project)
@@ -87,6 +92,8 @@ def main():
     settings = config['llm']['hidden_qwen_coder']
     ids = DEFAULT_IDS[:args.samples]
     prepare_environment(settings)
+    os.environ['INTERACTION_PROMPT_VARIANT'] = args.prompt_variant
+    print('Prompt variant:', args.prompt_variant)
     print('Agent model:', settings['model'])
     print('User proxy:', os.environ['INTERACTION_USER_MODEL'], '(Qwen, not paper GPT-4o)')
     print('Selected instances:', ', '.join(ids))

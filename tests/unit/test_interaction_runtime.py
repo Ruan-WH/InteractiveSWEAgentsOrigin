@@ -65,6 +65,16 @@ def test_patch_timeout_is_explicit(monkeypatch):
                             pd.Series({'repo': 'a/b', 'version': '1', 'base_commit': 'abc'}))
 
 
+def test_patch_uses_initialized_workspace_when_excel_version_differs(monkeypatch):
+    execute = Mock(return_value=SimpleNamespace(stdout='patch\n'))
+    monkeypatch.setattr('evaluation.utils.interaction_runtime.subprocess.run', execute)
+    runtime = SimpleNamespace(container=SimpleNamespace(id='one'),
+                              swebench_workspace_dir='/workspace/astropy__astropy__5')
+    instance = pd.Series({'repo': 'astropy/astropy', 'version': '5.0', 'base_commit': 'abc'})
+    assert extract_local_patch(runtime, instance)['git_patch'] == 'patch\n'
+    assert execute.call_args.args[0][3] == '/workspace/astropy__astropy__5'
+
+
 def test_controller_returns_result_despite_cancellation_resistant_task():
     async def background():
         try:
