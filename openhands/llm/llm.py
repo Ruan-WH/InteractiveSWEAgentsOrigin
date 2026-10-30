@@ -141,6 +141,7 @@ class LLM(RetryMixin, DebugMixin):
             temperature=self.config.temperature,
             top_p=self.config.top_p,
             drop_params=self.config.drop_params,
+            **({'extra_body': self.config.extra_body} if self.config.extra_body is not None else {}),
         )
 
         self._completion_unwrapped = self._completion

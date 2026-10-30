@@ -80,19 +80,25 @@ def check_images(ids):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--samples', type=int, choices=(3, 4, 5), default=3)
+    parser.add_argument('--samples', type=int, choices=(1, 3, 4, 5), default=3)
+    parser.add_argument('--agent-llm-config', default='hidden_qwen_coder')
+    parser.add_argument('--proxy-llm-config', default='hidden_qwen_coder')
     parser.add_argument('--check-only', action='store_true')
-    parser.add_argument('--prompt-variant', choices=('original', 'targeted-v1'), default='original')
+    parser.add_argument('--proxy-policy', choices=('original', 'grounded-v1'), default='original')
+    parser.add_argument('--prompt-variant', choices=('original', 'targeted-v1', 'paper-mandatory-v1'), default='original')
     args, extra = parser.parse_known_args()
     project = Path(__file__).resolve().parents[4]
     os.chdir(project)
     sys.path.insert(0, str(project))
     os.environ['PATH'] = str(Path(sys.executable).parent) + os.pathsep + os.environ['PATH']
     config = tomllib.loads((project / 'config.toml').read_text())
-    settings = config['llm']['hidden_qwen_coder']
+    settings = config['llm'][args.agent_llm_config]
+    proxy_settings = config['llm'][args.proxy_llm_config]
     ids = DEFAULT_IDS[:args.samples]
-    prepare_environment(settings)
+    prepare_environment(proxy_settings)
     os.environ['INTERACTION_PROMPT_VARIANT'] = args.prompt_variant
+    os.environ['INTERACTION_PROXY_POLICY'] = args.proxy_policy
+    print('Proxy policy:', args.proxy_policy)
     print('Prompt variant:', args.prompt_variant)
     print('Agent model:', settings['model'])
     print('User proxy:', os.environ['INTERACTION_USER_MODEL'], '(Qwen, not paper GPT-4o)')
@@ -114,9 +120,10 @@ def main():
         subset.to_excel(path, index=False)
         sys.argv = [
             'interact_run_infer.py', '--agent-cls', 'CodeActAgent',
-            '--llm-config', 'llm.hidden_qwen_coder', '--csv_file', str(path),
+            '--llm-config', f'llm.{args.agent_llm_config}', '--csv_file', str(path),
             '--dataset', 'princeton-nlp/SWE-bench_Verified', '--split', 'test',
-            '--eval-n-limit', str(len(ids)), '--max-iterations', '70',
+            '--eval-n-limit', str(len(ids)), '--max-iterations',
+            '100' if args.prompt_variant == 'paper-mandatory-v1' else '70',
             '--eval-num-workers', '1', '--eval-note', 'interaction-qwen-flash-pilot-v2',
             *extra,
         ]

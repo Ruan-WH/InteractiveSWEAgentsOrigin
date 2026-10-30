@@ -148,14 +148,14 @@ def load_from_toml(cfg: AppConfig, toml_file: str = 'config.toml'):
                     # Extract generic LLM fields, keeping draft_editor
                     generic_llm_fields = {}
                     for k, v in value.items():
-                        if not isinstance(v, dict) or k == 'draft_editor':
+                        if not isinstance(v, dict) or k in ('draft_editor', 'extra_body'):
                             generic_llm_fields[k] = v
                     generic_llm_config = LLMConfig.from_dict(generic_llm_fields)
                     cfg.set_llm_config(generic_llm_config, 'llm')
 
                     # Process custom named LLM configs
                     for nested_key, nested_value in value.items():
-                        if isinstance(nested_value, dict):
+                        if isinstance(nested_value, dict) and nested_key != 'extra_body':
                             logger.openhands_logger.debug(
                                 f'Processing custom LLM config "{nested_key}":'
                             )
@@ -168,7 +168,7 @@ def load_from_toml(cfg: AppConfig, toml_file: str = 'config.toml'):
                             # results in num_retries APPLIED to claude-3-5-sonnet
                             custom_fields = {}
                             for k, v in nested_value.items():
-                                if not isinstance(v, dict) or k == 'draft_editor':
+                                if not isinstance(v, dict) or k in ('draft_editor', 'extra_body'):
                                     custom_fields[k] = v
                             merged_llm_dict = generic_llm_config.__dict__.copy()
                             merged_llm_dict.update(custom_fields)

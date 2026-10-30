@@ -46,6 +46,7 @@ class LLMConfig:
         draft_editor: A more efficient LLM to use for file editing. Introduced in [PR 3985](https://github.com/All-Hands-AI/OpenHands/pull/3985).
         custom_tokenizer: A custom tokenizer to use for token counting.
         native_tool_calling: Whether to use native tool calling if supported by the model. Can be True, False, or not set.
+        extra_body: Optional provider-specific request body, e.g. a thinking-mode toggle.
     """
 
     model: str = 'claude-3-5-sonnet-20241022'
@@ -85,6 +86,7 @@ class LLMConfig:
     draft_editor: Optional['LLMConfig'] = None
     custom_tokenizer: str | None = None
     native_tool_calling: bool | None = None
+    extra_body: dict | None = None
 
     def defaults_to_dict(self) -> dict:
         """Serialize fields to a dict for the frontend, including type hints, defaults, and whether it's optional."""
@@ -142,7 +144,7 @@ class LLMConfig:
         args = {
             k: v
             for k, v in llm_config_dict.items()
-            if not isinstance(v, dict) or v is None
+            if not isinstance(v, dict) or k == 'extra_body' or v is None
         }
         if (
             'draft_editor' in llm_config_dict

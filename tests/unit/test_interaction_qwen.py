@@ -47,6 +47,57 @@ def test_empty_proxy_answer_is_not_counted(module, monkeypatch):
         proxy.generate_reply(SimpleNamespace(content='Question'))
     assert proxy.turns == 0
     assert proxy.interactions == []
+    assert len(proxy.chat_history) == 1
+
+
+def test_grounded_proxy_preserves_sources_and_records_exact_requests(module, monkeypatch, tmp_path):
+    monkeypatch.setenv('INTERACTION_PROXY_POLICY', 'grounded-v1')
+    requests = []
+
+    def reply(**kwargs):
+        requests.append([dict(message) for message in kwargs['messages']])
+        return SimpleNamespace(
+            choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps({
+                'evidence': [{'source': 'hints', 'quote': 'Final: I agree with just changing it.'}],
+                'message_kind': 'question', 'final_requirement': 'Change it now.', 'answer': 'Use the final behavior.',
+            })))],
+            model='offline', usage=None,
+        )
+
+    monkeypatch.setattr(module.client.chat.completions, 'create', reply)
+    path = tmp_path / 'answers.json'
+    issue = 'Should a FutureWarning precede the change?'
+    hints = 'Earlier: warn first. Final: I agree with just changing it.'
+    proxy = module.FakeUser(issue, hints, ['table.py'], log_path=path)
+    for question in ('1. Which warning?\n2. What behavior?', 'Does this need a warning?'):
+        proxy.generate_reply(SimpleNamespace(content=question))
+    records = json.loads(path.read_text())
+    assert [record['request_messages'] for record in records] == requests[::2]
+    assert all(record['proxy_policy'] == 'grounded-v1' for record in records)
+    assert json.loads(requests[2][-3]['content'])['answer'] == 'Use the final behavior.'
+    # Logging the second turn must not mutate the saved first request.
+    assert len(records[0]['request_messages']) == 3
+    assert len(records[1]['request_messages']) == 5
+    sources, _ = json.JSONDecoder().raw_decode(proxy.system_message.split('Source record:\n', 1)[1])
+    assert sources == {'issue': issue, 'hints': hints, 'files': "['table.py']"}
+
+
+def test_bad_proxy_json_is_repaired_without_restarting_sample(module, monkeypatch, tmp_path):
+    monkeypatch.setenv('INTERACTION_PROXY_POLICY', 'grounded-v1')
+    valid = json.dumps({'message_kind': 'question', 'evidence': [],
+                        'final_requirement': 'unknown', 'answer': "I don't have that information"})
+    def response(text):
+        return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=text))],
+                               model='offline', usage=None)
+    create = Mock(side_effect=[response('{"answer": "incomplete"}'), response(valid), response(valid)])
+    monkeypatch.setattr(module.client.chat.completions, 'create', create)
+    proxy = module.FakeUser('issue', '', '', log_path=tmp_path / 'answers.json')
+    assert proxy.generate_reply(SimpleNamespace(content='Which version?')) == "I don't have that information"
+    assert proxy.turns == 1
+    assert proxy.interactions[0]['proxy_api_attempts'] == 2
+    assert len(list(tmp_path.glob('*.attempt-*.json'))) == 2
+    assert len(proxy.chat_history) == 3
+    assert 'incomplete' not in str(proxy.chat_history)
 
 
 def test_check_only_never_starts_evaluator(monkeypatch, capsys):
