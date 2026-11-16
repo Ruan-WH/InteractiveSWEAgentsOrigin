@@ -157,3 +157,110 @@ def test_finalization_failure_keeps_history_and_questions(module, monkeypatch, t
     assert result.instruction == 'summarized issue'
     assert result.test_result['interactions'] == []
     module.close_runtime_bounded.assert_called_once_with(runtime)
+
+
+@pytest.mark.parametrize('policy', ['legacy-v5', 'simple-v1'])
+def test_answer_check_finishes_before_runtime_and_closes_repair_proxy(module, monkeypatch, tmp_path, policy):
+    from litellm import ModelResponse
+    import pandas as pd
+    from openhands.core.config import LLMConfig
+
+    monkeypatch.setenv('INTERACTION_PROMPT_VARIANT', 'answer-check-v1')
+    monkeypatch.setenv('INTERACTION_PROXY_POLICY', 'original')
+    monkeypatch.setenv('ANSWER_CHECK_MAX_FOLLOWUPS', '2')
+    monkeypatch.setenv('ANSWER_CHECK_POLICY', policy)
+    monkeypatch.setattr(module, 'USE_HINT_TEXT', False)
+    config = SimpleNamespace(get_llm_config=Mock(return_value=LLMConfig()))
+    monkeypatch.setattr(module, 'get_config', Mock(return_value=config))
+    state = SimpleNamespace(last_error='', history=[], metrics=None)
+    runtime = SimpleNamespace(container=SimpleNamespace(id='offline'), connect=Mock())
+    calls = []
+
+    def model_response(text):
+        return ModelResponse(choices=[{'index': 0, 'message': {'role': 'assistant', 'content': text}}])
+
+    ask = {'decision': 'ask', 'missing_information': 'Intervening operation',
+           'behavioral_impact': 'Cannot identify the failure trigger',
+           'question': 'Which operation happens before re-evaluation?', 'reason': 'Initial display succeeds'}
+    stop = {'decision': 'stop', 'missing_information': '', 'behavioral_impact': '',
+            'question': '', 'reason': 'The concrete sequence is now given'}
+    phase_llm = SimpleNamespace(completion=Mock(side_effect=[
+        model_response('1. What is the reproduction sequence?'),
+        model_response(json.dumps({'reported_failure_transition': [], 'steps': [], 'unavailable_information': [], 'missing_transition_details': []})),
+        model_response(json.dumps(ask)),
+        model_response(json.dumps({'reported_failure_transition': [], 'steps': [], 'unavailable_information': [], 'missing_transition_details': []})),
+        model_response(json.dumps(stop)),
+    ]))
+    monkeypatch.setattr('openhands.llm.llm.LLM', Mock(return_value=phase_llm))
+    checker_create = Mock(side_effect=[
+        model_response(json.dumps({'trigger_evidence': None, 'question': ask['question']})),
+        model_response(json.dumps({'trigger_evidence': 'Run the derived values_list call, then display qs again.', 'question': ''})),
+    ])
+    if policy == 'simple-v1':
+        monkeypatch.setattr(module, 'get_llm_config_arg', Mock(return_value=LLMConfig(
+            model='openai/deepseek-flash', api_key='checker-key', base_url='https://example.invalid/v1')))
+        monkeypatch.setattr(module.openai, 'OpenAI', Mock(return_value=SimpleNamespace(
+            chat=SimpleNamespace(completions=SimpleNamespace(create=checker_create)))))
+
+    def proxy_reply(**kwargs):
+        calls.append('proxy')
+        answer = 'First display succeeds.' if len(calls) == 1 else 'Run the derived values_list call, then display qs again.'
+        return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=answer))],
+                               model='offline', usage=None)
+
+    monkeypatch.setattr(module.client.chat.completions, 'create', Mock(side_effect=proxy_reply))
+
+    def create_runtime(config):
+        assert calls == ['proxy', 'proxy']
+        assert phase_llm.completion.call_count == (1 if policy == 'simple-v1' else 5)
+        if policy == 'simple-v1':
+            assert checker_create.call_count == 2
+            assert checker_create.call_args.kwargs['model'] == 'deepseek-flash'
+            assert checker_create.call_args.kwargs['response_format'] == {'type': 'json_object'}
+            assert 'PRIVATE_' not in str(checker_create.call_args_list)
+        assert module.fake_user.clarification_closed
+        calls.append('runtime')
+        return runtime
+
+    monkeypatch.setattr(module, 'create_runtime', Mock(side_effect=create_runtime))
+    monkeypatch.setattr(module, 'call_async_from_sync', Mock())
+    monkeypatch.setattr(module, 'initialize_runtime', Mock())
+    monkeypatch.setattr(module, 'guard_busy_shell', Mock())
+    controller = Mock(return_value='offline-coroutine')
+    monkeypatch.setattr(module, 'run_controller', controller)
+    monkeypatch.setattr(module, 'run_controller_bounded_cleanup', Mock(return_value=state))
+    monkeypatch.setattr(module, 'extract_local_patch', Mock(return_value={'git_patch': 'offline-patch'}))
+    monkeypatch.setattr(module, 'close_runtime_bounded', Mock(return_value=None))
+    instance = pd.Series({'instance_id': 'offline-check', 'repo': 'org/repo', 'version': '1',
+                          'problem_statement': 'PUBLIC_SUMMARY', 'original_issue': 'PRIVATE_ISSUE',
+                          'hints_text': 'PRIVATE_HINTS', 'files': 'private.py'})
+    metadata = module.EvalMetadata(agent_class='CodeActAgent', llm_config=LLMConfig(),
+                                   max_iterations=100, eval_output_dir=str(tmp_path),
+                                   start_time='offline', git_commit='offline')
+    result = module.process_instance(instance, metadata, reset_logger=False)
+    assert result.test_result['answer_check']['followups_used'] == 1
+    assert result.num_turns == 2
+    handoff = controller.call_args.kwargs['initial_user_action'].content
+    assert 'First display succeeds.' in handoff and 'derived values_list' in handoff
+    assert 'PRIVATE_' not in handoff
+    assert 'three times' not in handoff and 'questions if you run into a problem' not in handoff
+    assert 'PRIVATE_' not in str(phase_llm.completion.call_args_list)
+    assert 'Do NOT ask' in module.fake_user.generate_reply(SimpleNamespace(content='Another question?'))
+    assert module.client.chat.completions.create.call_count == 2
+
+
+def test_answer_check_check_only_exposes_flag_without_running_evaluation(monkeypatch):
+    scripts = Path(__file__).resolve().parents[2] / 'evaluation/benchmarks/swe_bench/scripts'
+    monkeypatch.syspath_prepend(str(scripts))
+    runner = importlib.import_module('run_interact_qwen')
+    monkeypatch.setattr(sys, 'argv', ['run_interact_qwen.py', '--samples', '1',
+                                    '--prompt-variant', 'answer-check-v1',
+                                    '--max-followups', '1', '--check-only'])
+    monkeypatch.setattr(runner, 'check_images', Mock())
+    evaluate = Mock()
+    monkeypatch.setattr(runner.runpy, 'run_module', evaluate)
+    runner.main()
+    import os
+    assert os.environ['INTERACTION_PROMPT_VARIANT'] == 'answer-check-v1'
+    assert os.environ['ANSWER_CHECK_MAX_FOLLOWUPS'] == '1'
+    evaluate.assert_not_called()

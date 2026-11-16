@@ -1,0 +1,8 @@
+The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the "order" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.
+
+The source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:
+
+```pycon
+>>> qs
+<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>
+```

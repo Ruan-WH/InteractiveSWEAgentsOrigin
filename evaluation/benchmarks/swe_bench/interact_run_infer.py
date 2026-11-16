@@ -84,11 +84,12 @@ class FakeUser:
             raise ValueError(f'Unknown proxy policy: {self.policy}')
         self.chat_history = [{'role': 'system', 'content': self.system_message}]
         self.turns = 0
+        self.clarification_closed = False
         self.interactions = []
         self.log_path = Path(log_path) if log_path else None
 
     def generate_reply(self, question):
-        if self.turns >= 3:
+        if self.clarification_closed or self.turns >= 3:
             return 'Please continue working on the task. Do NOT ask for more help.'
         grounded = self.policy == 'grounded-v1'
         current_message = {'role': 'user', 'content': question.content}
@@ -229,6 +230,10 @@ def _get_swebench_workspace_dir_name(instance: pd.Series) -> str:
 
 
 def get_instruction(instance: pd.Series, metadata: EvalMetadata):
+    prompt_variant = os.environ.get('INTERACTION_PROMPT_VARIANT', 'original')
+    checking = prompt_variant == 'answer-check-v1'
+    if checking and (USE_HINT_TEXT or metadata.agent_class != 'CodeActAgent'):
+        raise ValueError('answer-check-v1 requires CodeActAgent and USE_HINT_TEXT=false')
     workspace_dir_name = _get_swebench_workspace_dir_name(instance)
     # Prepare instruction
     if metadata.agent_class == 'CodeActSWEAgent':
@@ -255,11 +260,16 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
             'Can you help me implement the necessary changes to the repository so that the requirements specified in the <pr_description> are met?\n'
             "I've already taken care of all changes to any of the test files described in the <pr_description>. This means you DON'T have to modify the testing logic or any of the tests in any way!\n"
             'Your task is to make the minimal changes to non-tests files in the /repo directory to ensure the <pr_description> is satisfied.\n'
-            'I have not provided all the necessary details about the issue and I have some hidden details that are helpful. Please ask me specifc questions using non-code commands to gather the relevant information that I have to help you solve the issue. Ensure you have all the details you require to solve the issue.\n'
-            'You have a limited number of turns. Do NOT interact with me more than three times so as to maximize the number of turns you have to work on the solution.\n'
-            'Follow these steps to resolve the issue:\n'
-            '1. As a first step, look at the issue and ask me questions to get all the necessary details about the issue. You can also ask me questions if you run into a problem in later steps.\n'
-            '2. Then, it might be a good idea to explore the repo to familiarize yourself with its structure.\n'
+            + ('User clarification is handled in a separate pre-repair phase. '
+               'Use its recorded exchanges; no further user replies are available during repair.\n'
+               if checking else
+               'I have not provided all the necessary details about the issue and I have some hidden details that are helpful. Please ask me specifc questions using non-code commands to gather the relevant information that I have to help you solve the issue. Ensure you have all the details you require to solve the issue.\n'
+               'You have a limited number of turns. Do NOT interact with me more than three times so as to maximize the number of turns you have to work on the solution.\n')
+            + 'Follow these steps to resolve the issue:\n'
+            + ('1. Read the issue and the recorded pre-repair clarification exchanges.\n'
+               if checking else
+               '1. As a first step, look at the issue and ask me questions to get all the necessary details about the issue. You can also ask me questions if you run into a problem in later steps.\n')
+            + '2. Then, it might be a good idea to explore the repo to familiarize yourself with its structure.\n'
             '2. Create a script to reproduce the error and execute it with `python <filename.py>` using the BashTool, to confirm the error\n'
             '3. Edit the sourcecode of the repo to resolve the issue\n'
             '4. Rerun your reproduce script and confirm that the error is fixed!\n'
@@ -267,7 +277,6 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
             "Your thinking should be thorough and so it's fine if it's very long.\n"
         )
 
-    prompt_variant = os.environ.get('INTERACTION_PROMPT_VARIANT', 'original')
     if prompt_variant == 'targeted-v1':
         instruction += (
             '\n<clarification_rules>\n'
@@ -282,7 +291,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
             '6. You may interact at most three times and need not use every exchange. Continue working when no consequential information gap remains.\n'
             '</clarification_rules>\n'
         )
-    elif prompt_variant not in ('original', 'paper-mandatory-v1'):
+    elif prompt_variant not in ('original', 'paper-mandatory-v1', 'answer-check-v1'):
         raise ValueError(f'Unknown interaction prompt variant: {prompt_variant}')
 
     if RUN_WITH_BROWSING:
@@ -600,10 +609,27 @@ def process_instance(
     global fake_user
     original_issue = instance.original_issue
     issue = str(original_issue)
-    fake_user = FakeUser(
-        issue=issue, hints=instance.hints_text, files=instance.files,
-        log_path=Path(metadata.eval_output_dir) / 'interaction_logs' / f'{instance.instance_id}.json',
-    )
+    proxy_log = Path(metadata.eval_output_dir) / 'interaction_logs' / f'{instance.instance_id}.json'
+    fixture_path = os.environ.get('INTERACTION_RESPONSE_FIXTURE')
+    if fixture_path:
+        from evaluation.utils.controlled_proxy import ControlledProxy
+
+        if os.environ.get('INTERACTION_PROMPT_VARIANT') != 'answer-check-v1':
+            raise ValueError('Fixed response fixtures require answer-check-v1')
+        fixture = json.loads(Path(fixture_path).read_text())
+        if (fixture['instance_id'] != instance.instance_id
+                or fixture['base_commit'] != instance.base_commit
+                or fixture['public_task']['summary'] != str(instance.problem_statement)):
+            raise ValueError('Response fixture does not match instance, base commit and public summary')
+        fake_user = ControlledProxy(
+            fixture, os.environ['INTERACTION_RESPONSE_CONDITION'], client,
+            os.environ.get('INTERACTION_USER_MODEL', 'gpt-4o-2024-05-13'), proxy_log,
+            temperature=float(os.environ.get('INTERACTION_USER_TEMPERATURE', '0')),
+            top_p=float(os.environ.get('INTERACTION_USER_TOP_P', '1')),
+        )
+    else:
+        fake_user = FakeUser(issue=issue, hints=instance.hints_text, files=instance.files,
+                             log_path=proxy_log)
     # Setup the logger properly, so you can run multi-processing to parallelize the evaluation
     if reset_logger:
         log_dir = os.path.join(metadata.eval_output_dir, 'infer_logs')
@@ -613,7 +639,9 @@ def process_instance(
 
     instruction = get_instruction(instance, metadata)
     clarification = None
-    if os.environ.get('INTERACTION_PROMPT_VARIANT') == 'paper-mandatory-v1':
+    answer_check = None
+    variant = os.environ.get('INTERACTION_PROMPT_VARIANT')
+    if variant in ('paper-mandatory-v1', 'answer-check-v1'):
         from evaluation.utils.mandatory_clarification import (
             run_mandatory_clarification, solving_instruction,
         )
@@ -623,10 +651,43 @@ def process_instance(
         phase_config = copy.deepcopy(config.get_llm_config())
         phase_config.log_completions = True
         phase_config.log_completions_folder = str(phase_dir / 'completions')
-        clarification = run_mandatory_clarification(
-            LLM(phase_config), instruction, fake_user, phase_dir / 'phase.json',
-        )
-        instruction = solving_instruction(instruction, clarification)
+        phase_llm = LLM(phase_config)
+        phase_instruction = str(instance.problem_statement) if variant == 'answer-check-v1' else instruction
+        if fixture_path:
+            clarification = {'protocol': 'controlled-fixed-initial-v1',
+                             **fake_user.initial_exchange(), 'status': 'answered'}
+            phase_dir.mkdir(parents=True, exist_ok=True)
+            (phase_dir / 'phase.json').write_text(json.dumps(clarification, ensure_ascii=False, indent=2))
+        else:
+            clarification = run_mandatory_clarification(
+                phase_llm, phase_instruction, fake_user, phase_dir / 'phase.json',
+            )
+        if variant == 'answer-check-v1':
+            from evaluation.utils.answer_check import (
+                checked_solving_instruction, run_answer_check,
+            )
+            check_llm, check_runner = phase_llm, run_answer_check
+            if os.environ.get('ANSWER_CHECK_POLICY', 'legacy-v5') == 'simple-v1':
+                from evaluation.utils.simple_clarification import (
+                    SimpleJSONChecker, run_simple_clarification,
+                )
+                checker_config = get_llm_config_arg(
+                    'llm.' + os.environ.get('ANSWER_CHECK_LLM_CONFIG', 'hidden_deepseek_flash')
+                )
+                check_llm = SimpleJSONChecker(openai.OpenAI(
+                    api_key=checker_config.api_key, base_url=checker_config.base_url,
+                    timeout=120, max_retries=0,
+                ), checker_config.model)
+                check_runner = run_simple_clarification
+            answer_check = check_runner(
+                check_llm, str(instance.problem_statement), [clarification], fake_user,
+                phase_dir / 'answer_check.json',
+                max_followups=int(os.environ.get('ANSWER_CHECK_MAX_FOLLOWUPS', '2')),
+            )
+            fake_user.clarification_closed = True
+            instruction = checked_solving_instruction(instruction, answer_check)
+        else:
+            instruction = solving_instruction(instruction, clarification)
 
     runtime = create_runtime(config)
     call_async_from_sync(runtime.connect)
@@ -682,6 +743,7 @@ def process_instance(
         'git_patch': git_patch,
         'interactions': fake_user.interactions,
         'mandatory_clarification': clarification,
+        'answer_check': answer_check,
         'cleanup_error': cleanup_error,
         'finalization_error': finalization_error,
     }
@@ -703,7 +765,8 @@ def process_instance(
         metadata=metadata,
         history=histories,
         metrics=metrics,
-        error=state.last_error or finalization_error or cleanup_error or None,
+        error=(state.last_error or finalization_error or cleanup_error
+               or (answer_check['error'] if answer_check else None) or None),
     )
     return output
 
@@ -772,6 +835,17 @@ if __name__ == '__main__':
         'user_proxy_base_url': os.environ.get('INTERACTION_USER_BASE_URL'),
         'max_user_proxy_turns': 3,
         'user_proxy_policy': os.environ.get('INTERACTION_PROXY_POLICY', 'original'),
+        'response_fixture': os.environ.get('INTERACTION_RESPONSE_FIXTURE'),
+        'response_condition': os.environ.get('INTERACTION_RESPONSE_CONDITION'),
+        'answer_check_protocol': (
+            os.environ.get('ANSWER_CHECK_POLICY', 'legacy-v5')
+            if os.environ.get('INTERACTION_PROMPT_VARIANT') == 'answer-check-v1' else None
+        ),
+        'answer_check_llm_config': os.environ.get('ANSWER_CHECK_LLM_CONFIG'),
+        'answer_check_max_followups': (
+            int(os.environ.get('ANSWER_CHECK_MAX_FOLLOWUPS', '2'))
+            if os.environ.get('INTERACTION_PROMPT_VARIANT') == 'answer-check-v1' else None
+        ),
         'runtime_finalization_policy': 'bounded-cleanup-independent-docker-exec-v1',
         'busy_shell_policy': 'poll-or-interrupt-before-new-command',
         'use_instance_image': USE_INSTANCE_IMAGE,
@@ -806,5 +880,6 @@ if __name__ == '__main__':
         output_file,
         args.eval_num_workers,
         process_instance,
+        max_retries=0 if os.environ.get('INTERACTION_RESPONSE_FIXTURE') else 5,
         timeout_seconds=120 * 60,  # 2 hour PER instance should be more than enough
     )

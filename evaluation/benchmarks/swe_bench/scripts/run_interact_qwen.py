@@ -87,7 +87,13 @@ def main():
     parser.add_argument('--proxy-llm-config', default='hidden_qwen_coder')
     parser.add_argument('--check-only', action='store_true')
     parser.add_argument('--proxy-policy', choices=('original', 'grounded-v1'), default='original')
-    parser.add_argument('--prompt-variant', choices=('original', 'targeted-v1', 'paper-mandatory-v1'), default='original')
+    parser.add_argument('--prompt-variant', choices=('original', 'targeted-v1', 'paper-mandatory-v1', 'answer-check-v1'), default='original')
+    parser.add_argument('--max-followups', type=int, choices=(0, 1, 2), default=2,
+                        help='Followups after the initial batch, for answer-check-v1 only')
+    parser.add_argument('--response-fixture', type=Path)
+    parser.add_argument('--response-condition', choices=('ideal', 'partial'))
+    parser.add_argument('--answer-check-policy', choices=('legacy-v5', 'simple-v1'), default='legacy-v5')
+    parser.add_argument('--checker-llm-config', default='hidden_deepseek_flash')
     args, extra = parser.parse_known_args()
     project = Path(__file__).resolve().parents[4]
     os.chdir(project)
@@ -96,13 +102,36 @@ def main():
     config = tomllib.loads((project / 'config.toml').read_text())
     settings = config['llm'][args.agent_llm_config]
     proxy_settings = config['llm'][args.proxy_llm_config]
+    if args.answer_check_policy == 'simple-v1':
+        if args.prompt_variant != 'answer-check-v1':
+            parser.error('simple-v1 requires --prompt-variant answer-check-v1')
+        config['llm'][args.checker_llm_config]
+    os.environ['ANSWER_CHECK_POLICY'] = args.answer_check_policy
+    os.environ['ANSWER_CHECK_LLM_CONFIG'] = args.checker_llm_config
     ids = args.instance_ids if args.instance_ids else DEFAULT_IDS[:args.samples or 3]
     if len(ids) != len(set(ids)):
         parser.error('--instance-ids must not contain duplicates')
+    if bool(args.response_fixture) != bool(args.response_condition):
+        parser.error('--response-fixture and --response-condition must be supplied together')
+    if args.response_fixture:
+        if args.prompt_variant != 'answer-check-v1':
+            parser.error('Fixed response fixtures require --prompt-variant answer-check-v1')
+        fixture_path = args.response_fixture.resolve()
+        fixture = json.loads(fixture_path.read_text())
+        if ids != [fixture['instance_id']]:
+            parser.error('A fixed response fixture must run only its matching instance')
+        os.environ['INTERACTION_RESPONSE_FIXTURE'] = str(fixture_path)
+        os.environ['INTERACTION_RESPONSE_CONDITION'] = args.response_condition
+    else:
+        os.environ.pop('INTERACTION_RESPONSE_FIXTURE', None)
+        os.environ.pop('INTERACTION_RESPONSE_CONDITION', None)
     prepare_environment(proxy_settings)
     os.environ['INTERACTION_PROMPT_VARIANT'] = args.prompt_variant
-    os.environ['INTERACTION_PROXY_POLICY'] = args.proxy_policy
-    print('Proxy policy:', args.proxy_policy)
+    os.environ['INTERACTION_PROXY_POLICY'] = 'controlled-fixture-v1' if args.response_fixture else args.proxy_policy
+    os.environ['ANSWER_CHECK_MAX_FOLLOWUPS'] = str(args.max_followups)
+    print('Proxy policy:', os.environ['INTERACTION_PROXY_POLICY'])
+    if args.response_fixture:
+        print('Fixed response condition:', args.response_condition)
     print('Prompt variant:', args.prompt_variant)
     print('Agent model:', settings['model'])
     print('User proxy:', os.environ['INTERACTION_USER_MODEL'], '(Qwen, not paper GPT-4o)')
@@ -127,7 +156,7 @@ def main():
             '--llm-config', f'llm.{args.agent_llm_config}', '--csv_file', str(path),
             '--dataset', 'princeton-nlp/SWE-bench_Verified', '--split', 'test',
             '--eval-n-limit', str(len(ids)), '--max-iterations',
-            '100' if args.prompt_variant == 'paper-mandatory-v1' else '70',
+            '100' if args.prompt_variant in ('paper-mandatory-v1', 'answer-check-v1') else '70',
             '--eval-num-workers', '1', '--eval-note', 'interaction-qwen-flash-pilot-v2',
             *extra,
         ]
