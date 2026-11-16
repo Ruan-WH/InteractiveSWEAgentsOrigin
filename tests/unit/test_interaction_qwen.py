@@ -115,6 +115,21 @@ def test_check_only_never_starts_evaluator(monkeypatch, capsys):
     assert 'No containers' in capsys.readouterr().out
 
 
+def test_explicit_instances_preserve_order_and_exclude_default_samples(monkeypatch):
+    scripts = Path(__file__).resolve().parents[2] / 'evaluation/benchmarks/swe_bench/scripts'
+    monkeypatch.syspath_prepend(str(scripts))
+    runner = importlib.import_module('run_interact_qwen')
+    ids = ['astropy__astropy-13398', 'django__django-10880']
+    monkeypatch.setattr(sys, 'argv', ['run_interact_qwen.py', '--instance-ids', *ids, '--check-only'])
+    check = Mock()
+    monkeypatch.setattr(runner, 'check_images', check)
+    evaluate = Mock()
+    monkeypatch.setattr(runner.runpy, 'run_module', evaluate)
+    runner.main()
+    check.assert_called_once_with(ids)
+    evaluate.assert_not_called()
+
+
 def test_finalization_failure_keeps_history_and_questions(module, monkeypatch, tmp_path):
     state = SimpleNamespace(last_error='', history=[], metrics=None)
     runtime = SimpleNamespace(container=SimpleNamespace(id='offline-container'), connect=Mock())

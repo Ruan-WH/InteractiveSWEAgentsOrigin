@@ -80,7 +80,9 @@ def check_images(ids):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--samples', type=int, choices=(1, 3, 4, 5), default=3)
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument('--samples', type=int, choices=(1, 3, 4, 5), default=None)
+    selection.add_argument('--instance-ids', nargs='+', help='Run these instance IDs in the supplied order')
     parser.add_argument('--agent-llm-config', default='hidden_qwen_coder')
     parser.add_argument('--proxy-llm-config', default='hidden_qwen_coder')
     parser.add_argument('--check-only', action='store_true')
@@ -94,7 +96,9 @@ def main():
     config = tomllib.loads((project / 'config.toml').read_text())
     settings = config['llm'][args.agent_llm_config]
     proxy_settings = config['llm'][args.proxy_llm_config]
-    ids = DEFAULT_IDS[:args.samples]
+    ids = args.instance_ids if args.instance_ids else DEFAULT_IDS[:args.samples or 3]
+    if len(ids) != len(set(ids)):
+        parser.error('--instance-ids must not contain duplicates')
     prepare_environment(proxy_settings)
     os.environ['INTERACTION_PROMPT_VARIANT'] = args.prompt_variant
     os.environ['INTERACTION_PROXY_POLICY'] = args.proxy_policy
