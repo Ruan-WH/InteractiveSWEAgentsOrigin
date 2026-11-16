@@ -1,0 +1,278 @@
+{
+  "schema_version": "answer-quality-audit-v1",
+  "date": "2026-11-16",
+  "annotation_method": "Single Codex LLM annotator; no external judge API calls; evidence mechanically checked; no independent human review.",
+  "inputs": [
+    {
+      "path": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/qwen-new7-grounded-v1-20261101/question_annotations.json",
+      "sha256": "cb3d7db97683aa3f96014b776ed3e5c27d746217a2d53dfc93f1a10209cf0854",
+      "use": "prior downstream adoption audit only; not answer-quality labels"
+    },
+    {
+      "path": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/qwen-proxy-grounded-v1-20261029/comparison.json",
+      "sha256": "b4cd877edcc7d8fc1c1eb12bdd772d95c41b61a2297bb8f83762b2d0e5ffd144",
+      "use": "historical outcome context only; not used to assign answer-quality labels"
+    },
+    {
+      "path": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/qwen-new7-grounded-v1-20261101/official_eval/results.json",
+      "sha256": "4d20a4a5bf877fa310e1cd6d745ad8d2553166cda1c3dabb210c1dd4acfcf8af",
+      "use": "historical outcome context only; not used to assign answer-quality labels"
+    },
+    {
+      "path": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/qwen-proxy-grounded-v1-20261029/inference.output.snapshot.jsonl",
+      "sha256": "ce405baeec08a1c7ddb4b1bb217498f9cd7424a13d1fef6821e46aa88213ec57"
+    },
+    {
+      "path": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/qwen-new7-grounded-v1-20261101/inference.output.snapshot.jsonl",
+      "sha256": "bd27b7f37182241a80a7e3d7af5c295966f31f5f429c51f20517ae01a5951026"
+    }
+  ],
+  "decision_file_sha256": "76f5c3a2bc36aca88c72486da8c82d394f050602903a835def543cf36a383214",
+  "unit": "numbered initial question and its final delivered answer, interpreted in full-batch context",
+  "initial_question_batches": 10,
+  "proxy_reply_messages": 30,
+  "excluded_progress_acknowledgements": 20,
+  "solver_plain_text_messages_reviewed": 102,
+  "targeted_solver_followups_observed": 0,
+  "overall": {
+    "questions": 42,
+    "incomplete": 9,
+    "ambiguous": 3,
+    "truth_issue": 8,
+    "any_primary_issue": 12,
+    "source_availability": {
+      "available": 31,
+      "unavailable": 3,
+      "partial": 8
+    },
+    "truth": {
+      "supported": 34,
+      "conflicting": 3,
+      "mixed": 5
+    },
+    "responsiveness": {
+      "direct": 35,
+      "partial": 7
+    }
+  },
+  "by_instance": {
+    "astropy__astropy-12907": {
+      "questions": 5,
+      "incomplete": 1,
+      "ambiguous": 0,
+      "truth_issue": 0,
+      "any_primary_issue": 1,
+      "source_availability": {
+        "available": 4,
+        "unavailable": 1
+      },
+      "truth": {
+        "supported": 5
+      },
+      "responsiveness": {
+        "direct": 5
+      }
+    },
+    "astropy__astropy-13033": {
+      "questions": 4,
+      "incomplete": 0,
+      "ambiguous": 0,
+      "truth_issue": 0,
+      "any_primary_issue": 0,
+      "source_availability": {
+        "available": 3,
+        "partial": 1
+      },
+      "truth": {
+        "supported": 4
+      },
+      "responsiveness": {
+        "direct": 3,
+        "partial": 1
+      }
+    },
+    "astropy__astropy-13236": {
+      "questions": 5,
+      "incomplete": 0,
+      "ambiguous": 0,
+      "truth_issue": 0,
+      "any_primary_issue": 0,
+      "source_availability": {
+        "available": 5
+      },
+      "truth": {
+        "supported": 5
+      },
+      "responsiveness": {
+        "direct": 5
+      }
+    },
+    "astropy__astropy-13398": {
+      "questions": 7,
+      "incomplete": 4,
+      "ambiguous": 3,
+      "truth_issue": 4,
+      "any_primary_issue": 4,
+      "source_availability": {
+        "available": 5,
+        "partial": 2
+      },
+      "truth": {
+        "supported": 3,
+        "conflicting": 3,
+        "mixed": 1
+      },
+      "responsiveness": {
+        "direct": 7
+      }
+    },
+    "astropy__astropy-13579": {
+      "questions": 3,
+      "incomplete": 2,
+      "ambiguous": 0,
+      "truth_issue": 0,
+      "any_primary_issue": 2,
+      "source_availability": {
+        "available": 2,
+        "partial": 1
+      },
+      "truth": {
+        "supported": 3
+      },
+      "responsiveness": {
+        "direct": 1,
+        "partial": 2
+      }
+    },
+    "astropy__astropy-8707": {
+      "questions": 3,
+      "incomplete": 0,
+      "ambiguous": 0,
+      "truth_issue": 0,
+      "any_primary_issue": 0,
+      "source_availability": {
+        "available": 2,
+        "unavailable": 1
+      },
+      "truth": {
+        "supported": 3
+      },
+      "responsiveness": {
+        "direct": 3
+      }
+    },
+    "astropy__astropy-8872": {
+      "questions": 4,
+      "incomplete": 0,
+      "ambiguous": 0,
+      "truth_issue": 2,
+      "any_primary_issue": 2,
+      "source_availability": {
+        "available": 3,
+        "partial": 1
+      },
+      "truth": {
+        "mixed": 2,
+        "supported": 2
+      },
+      "responsiveness": {
+        "direct": 4
+      }
+    },
+    "django__django-10097": {
+      "questions": 3,
+      "incomplete": 0,
+      "ambiguous": 0,
+      "truth_issue": 0,
+      "any_primary_issue": 0,
+      "source_availability": {
+        "available": 2,
+        "partial": 1
+      },
+      "truth": {
+        "supported": 3
+      },
+      "responsiveness": {
+        "direct": 2,
+        "partial": 1
+      }
+    },
+    "django__django-10554": {
+      "questions": 4,
+      "incomplete": 2,
+      "ambiguous": 0,
+      "truth_issue": 1,
+      "any_primary_issue": 2,
+      "source_availability": {
+        "available": 3,
+        "partial": 1
+      },
+      "truth": {
+        "supported": 3,
+        "mixed": 1
+      },
+      "responsiveness": {
+        "direct": 3,
+        "partial": 1
+      }
+    },
+    "django__django-10880": {
+      "questions": 4,
+      "incomplete": 0,
+      "ambiguous": 0,
+      "truth_issue": 1,
+      "any_primary_issue": 1,
+      "source_availability": {
+        "available": 2,
+        "unavailable": 1,
+        "partial": 1
+      },
+      "truth": {
+        "supported": 3,
+        "mixed": 1
+      },
+      "responsiveness": {
+        "direct": 2,
+        "partial": 2
+      }
+    }
+  },
+  "primary_issue_instances": [
+    "astropy__astropy-12907",
+    "astropy__astropy-13398",
+    "astropy__astropy-13579",
+    "astropy__astropy-8872",
+    "django__django-10554",
+    "django__django-10880"
+  ],
+  "limitations": [
+    "Selected ten cases, not random benchmark prevalence.",
+    "Multiple numbered answers can share one underlying gap; rates are not independent observations.",
+    "No followup is descriptive; progress messages also consumed the original three-reply budget.",
+    "Source support does not establish execution correctness or fidelity to a gold patch.",
+    "Downstream adoption is observational and cannot establish per-answer causal effects.",
+    "Ambiguous and incomplete are distinct; missing exact outputs need not admit multiple semantic interpretations.",
+    "All labels require independent human review before use as publication ground truth."
+  ],
+  "sensitivity_if_borderline_flags_are_removed": {
+    "questions": 42,
+    "incomplete": 7,
+    "ambiguous": 3,
+    "truth_issue": 5,
+    "any_primary_issue": 8,
+    "source_availability": {
+      "available": 31,
+      "unavailable": 3,
+      "partial": 8
+    },
+    "truth": {
+      "supported": 37,
+      "conflicting": 3,
+      "mixed": 2
+    },
+    "responsiveness": {
+      "direct": 35,
+      "partial": 7
+    }
+  }
+}
