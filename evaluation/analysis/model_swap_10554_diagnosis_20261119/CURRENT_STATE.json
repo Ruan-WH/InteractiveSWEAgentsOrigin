@@ -1,0 +1,51 @@
+{
+  "objective_status": "NOT ACHIEVED; experiments stopped at explicit user request",
+  "live_sessions": {},
+  "terminal_new_conditions": {
+    "evidence-minimal": "100 responses; empty patch; official harness skipped",
+    "evidence-bash": "100 responses; test scratch only, no production edit; official unresolved;0/2 target,23/23 regression",
+    "evidence-progress": "100 controller actions/91 model responses;5 reminders;1followup;no production edit;official offline target0/2reg23/23resolvedFalse"
+  },
+  "new_capability_controls": {
+    "round2_public_matrix": "18/32;existing26 tests pass2skip",
+    "round3_public_matrix": "24/32;existing26 tests fail1skip2",
+    "round4": "20/32;existing26 tests fail1skip2; negative",
+    "max-same-feedback": "Official resolvedTrue,target2/2,reg23/23; raw patch verified unchanged. Assisted Max, not autonomous partial or Flash success",
+    "gold_extended_matrix": "24/32;all16 flat=True pass; extended matrix stricter than official scope, PRIVATE control never solver feedback"
+  },
+  "next_actions": [
+    "Do not launch further experiments without explicit user resume",
+    "After quota recovery and explicit resume, evaluate evidence selection/repair-target handoff before expanding cases"
+  ],
+  "source_constraints": "Four clarification modules identical to9208606; public baseline retrieval only; no pre-agent test generator; gold/hidden tests never fed to solver",
+  "repair_progress": "Reminders change some next actions to test execution but do not produce a repair; completed negative condition.",
+  "own_trace_handoff": {
+    "status": "single authorized request completed; raw patch official unresolved",
+    "parent_completed_tools": 41,
+    "parent_response_index": 34,
+    "public_trace_characters": 165124,
+    "new_external_issue_facts": false,
+    "input_messages_sha256": "a2a24ce90fad1639fb4cf7adf19e8e051cc7ab1b90dd150e55dd2f054d8d3108",
+    "user_permission": "explicit, one transfer only",
+    "provider_retries": 0,
+    "budget_change": "synthesis thinking16384/output24576; parent thinking4096/output8192; not an equal-token control",
+    "local_execution_review": "Two rejections resolved by explicit user authorization of exact payload; request sent once, no retries; no other historical transfer authorized."
+  },
+  "user_stop_reason": "Qwen API open platform quota exhausted; user: 中止实验并总结",
+  "new_model_calls_allowed": false,
+  "requires_explicit_resume": true,
+  "consolidation_result": {
+    "scope": "Autonomous own-trace consolidation development trial, using only parent public history; no researcher-provided failure probe or localized source",
+    "model": "qwen3.8-max",
+    "parent_completed_tools": 41,
+    "synthesis_model_calls": 1,
+    "target_successes": 0,
+    "regression_successes": 23,
+    "resolved": false,
+    "official_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/grader_controls/own-max-consolidation40-offline/logs/run_evaluation/10554-diagnosis-controls-20261119-own-max-consolidation40-offline/own-max-consolidation40-offline/django__django-10554/report.json",
+    "raw_patch": "own-max-consolidation40.patch",
+    "native_observation": "Returned to combined-query cloning hypothesis, despite parent observations of ordered-projection failure.",
+    "budget_limit": "Synthesis thinking16384 vs parent4096; not equal-token comparison."
+  },
+  "last_updated": "2026-11-19T15:08:02.502840+08:00"
+}

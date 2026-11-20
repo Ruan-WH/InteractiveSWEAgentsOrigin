@@ -1,0 +1,15 @@
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index a791908caf..0825e621c0 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -413,6 +413,10 @@ class SQLCompiler:
+             query.get_compiler(self.using, self.connection)
+             for query in self.query.combined_queries if not query.is_empty()
+         ]
++        # Clone the combined queries to avoid mutating the original query
++        # objects stored in combined_queries during compilation.
++        for compiler in compilers:
++            compiler.query = compiler.query.clone()
+         if not features.supports_slicing_ordering_in_compound:
+             for query, compiler in zip(self.query.combined_queries, compilers):
+                 if query.low_mark or query.high_mark:

@@ -1,0 +1,31 @@
+{
+  "model": "qwen3-coder-flash",
+  "condition": "partial + simple-v1 followup",
+  "solver_responses": 56,
+  "followups_used": 1,
+  "solver_error": null,
+  "official_resolved": false,
+  "tests": {
+    "FAIL_TO_PASS": {
+      "passed": 0,
+      "failed": 2
+    },
+    "PASS_TO_PASS": {
+      "passed": 23,
+      "failed": 0
+    },
+    "FAIL_TO_FAIL": {
+      "passed": 0,
+      "failed": 0
+    },
+    "PASS_TO_FAIL": {
+      "passed": 0,
+      "failed": 0
+    }
+  },
+  "production_patch_files": [],
+  "output_path": "evaluation/evaluation_outputs/simple-full-partial-20261116/partial/output.jsonl",
+  "same_initial_qa": true,
+  "same_complete_qa": false,
+  "limits": "Historical comparison, not a newly rerun paired old-model arm; actual followup wording differs. New arm reads reference history."
+}

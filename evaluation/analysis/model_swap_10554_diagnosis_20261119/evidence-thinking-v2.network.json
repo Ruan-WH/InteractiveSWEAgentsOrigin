@@ -1,0 +1,10 @@
+[
+  {
+    "id": "b7edadc055240453ba996bf221101dd305fc2184e26dc52435d732c1c80642f4",
+    "networks": [
+      "ambig-swe-diagnosis-thinking-20261119"
+    ],
+    "internal": true,
+    "external_tcp_blocked": true
+  }
+]

@@ -1,6 +1,7 @@
 """Bounded interaction cleanup and local patch extraction, without model calls."""
 
 import asyncio
+import atexit
 import queue
 import shlex
 import subprocess
@@ -8,6 +9,24 @@ import threading
 
 from openhands.core.logger import openhands_logger as logger
 from openhands.events.observation import CmdOutputObservation, ErrorObservation
+
+
+def scope_runtime_cleanup(runtime):
+    """Replace DockerRuntime's process-wide exit cleanup with ownership cleanup."""
+    from openhands.runtime.impl.docker.docker_runtime import remove_all_runtime_containers
+
+    atexit.unregister(remove_all_runtime_containers)
+
+    def remove_owned_container():
+        container = getattr(runtime, 'container', None)
+        if container is not None:
+            try:
+                container.remove(force=True)
+            except Exception:
+                # Normal close may already have removed this exact container.
+                pass
+
+    atexit.register(remove_owned_container)
 
 
 def guard_busy_shell(runtime):

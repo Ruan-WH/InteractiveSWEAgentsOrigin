@@ -1,0 +1,50 @@
+{
+  "history": [
+    {
+      "path": "/testbed",
+      "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+      "tree": "b3f2ad248aec2b040a5860e6ddc4c27db4329b5b",
+      "prior_reachable_commits": 48863,
+      "remaining_commits": [
+        "14d026cccb144c6877294ba4cd4e03ebf0842498"
+      ],
+      "remaining_objects": 8344,
+      "source_unchanged": true,
+      "remotes": [],
+      "git_diff_available": true
+    },
+    {
+      "path": "/workspace/django__django__3",
+      "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+      "tree": "b3f2ad248aec2b040a5860e6ddc4c27db4329b5b",
+      "prior_reachable_commits": 48863,
+      "remaining_commits": [
+        "14d026cccb144c6877294ba4cd4e03ebf0842498"
+      ],
+      "remaining_objects": 8344,
+      "source_unchanged": true,
+      "remotes": [],
+      "git_diff_available": true
+    }
+  ],
+  "alignment_stdout": "REPAIR_WORKSPACE_ALIGNED={\"workspace\": \"/workspace/django__django__3\", \"installed_path\": \"/testbed\", \"single_source_tree\": true, \"base_commit\": \"14d026cccb144c6877294ba4cd4e03ebf0842498\", \"import_probe\": {\"module_path\": \"/testbed/django/__init__.py\"}, \"python_version\": \"Python 3.6.13 :: Anaconda, Inc.\"}\n",
+  "behavior_probe": {
+    "reported_sequence_baseline_passes": true,
+    "derived_pks": [
+      10,
+      11,
+      16,
+      17
+    ],
+    "ordered_pks": [
+      11,
+      17,
+      10,
+      16
+    ],
+    "module": "/testbed/django/__init__.py",
+    "edit_visible_through_installed_import": true
+  },
+  "existing_test_log": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/analysis/model_swap_10554_diagnosis_20261119/baseline_existing_tests.log",
+  "network_internal": true
+}

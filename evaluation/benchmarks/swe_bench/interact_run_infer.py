@@ -342,6 +342,7 @@ def get_config(
             base_container_image=base_container_image,
             enable_auto_lint=True,
             use_host_network=False,
+            local_runtime_url=os.environ.get('EVAL_LOCAL_RUNTIME_URL', 'http://localhost'),
             docker_runtime_kwargs=json.loads(os.environ.get('DOCKER_RUNTIME_KWARGS', 'null')),
             # large enough timeout, since some testcases take very long to run
             timeout=300,
@@ -427,10 +428,11 @@ def initialize_runtime(
             temp_file_path = os.path.join(temp_dir, swe_instance_json_name)
             # Write to the file with the desired name within the temporary directory
             with open(temp_file_path, 'w') as f:
-                if not isinstance(instance, dict):
-                    json.dump([instance.to_dict()], f)
-                else:
-                    json.dump([instance], f)
+                runtime_instance = instance if isinstance(instance, dict) else instance.to_dict()
+                if os.environ.get('CLEAN_REFERENCE_HISTORY') == '1':
+                    from evaluation.utils.reference_history import PUBLIC_INSTANCE_KEYS
+                    runtime_instance = {key: runtime_instance[key] for key in PUBLIC_INSTANCE_KEYS}
+                json.dump([runtime_instance], f)
 
             # Copy the file to the desired location
             runtime.copy_to(temp_file_path, '/swe_util/eval_data/instances/')
@@ -667,7 +669,21 @@ def process_instance(
                 checked_solving_instruction, run_answer_check,
             )
             check_llm, check_runner = phase_llm, run_answer_check
-            if os.environ.get('ANSWER_CHECK_POLICY', 'legacy-v5') == 'simple-v1':
+            initial_only = os.environ.get('CLARIFICATION_MODE', 'adaptive') == 'initial-only'
+            if initial_only:
+                if not fixture_path:
+                    raise ValueError('initial-only requires fixed initial Q/A')
+                answer_check = {
+                    'protocol': 'fixed-initial-only-v1', 'status': 'not_run',
+                    'task_summary': str(instance.problem_statement),
+                    'exchanges': [{k: clarification[k] for k in ('question', 'answer')}],
+                    'checks': [], 'max_followups': 0, 'followups_used': 0,
+                    'stop_reason': 'initial_only_control', 'unresolved_information': '',
+                    'unavailable_information': [], 'error': None,
+                }
+                (phase_dir / 'answer_check.json').write_text(
+                    json.dumps(answer_check, ensure_ascii=False, indent=2) + '\n')
+            elif os.environ.get('ANSWER_CHECK_POLICY', 'legacy-v5') == 'simple-v1':
                 from evaluation.utils.simple_clarification import (
                     SimpleJSONChecker, run_simple_clarification,
                 )
@@ -679,22 +695,68 @@ def process_instance(
                     timeout=120, max_retries=0,
                 ), checker_config.model)
                 check_runner = run_simple_clarification
-            answer_check = check_runner(
-                check_llm, str(instance.problem_statement), [clarification], fake_user,
-                phase_dir / 'answer_check.json',
-                max_followups=int(os.environ.get('ANSWER_CHECK_MAX_FOLLOWUPS', '2')),
-            )
+            if not initial_only:
+                answer_check = check_runner(
+                    check_llm, str(instance.problem_statement), [clarification], fake_user,
+                    phase_dir / 'answer_check.json',
+                    max_followups=int(os.environ.get('ANSWER_CHECK_MAX_FOLLOWUPS', '2')),
+                )
             fake_user.clarification_closed = True
             instruction = checked_solving_instruction(instruction, answer_check)
         else:
             instruction = solving_instruction(instruction, clarification)
 
     runtime = create_runtime(config)
+    if os.environ.get('CLEAN_REFERENCE_HISTORY') == '1':
+        from evaluation.utils.interaction_runtime import scope_runtime_cleanup
+        scope_runtime_cleanup(runtime)
     call_async_from_sync(runtime.connect)
+    reference_history = None
 
     try:
         initialize_runtime(runtime, instance)
         guard_busy_shell(runtime)
+        if os.environ.get('CLEAN_REFERENCE_HISTORY') == '1':
+            from evaluation.utils.reference_history import clean_reference_history
+            reference_history = clean_reference_history(
+                runtime, instance, phase_dir / 'reference_history.json')
+
+        repair_workspace = None
+        baseline_test_context = None
+        repair_tool_policy = None
+        repair_progress = None
+        workflow = os.environ.get('REPAIR_WORKFLOW', 'original')
+        if workflow != 'original':
+            if reference_history is None:
+                raise ValueError('Workspace alignment requires verified clean reference history')
+            from evaluation.utils.repair_workspace import prepare_repair_workspace, repair_guidance
+            repair_workspace = prepare_repair_workspace(runtime, instance, phase_dir / 'repair_workspace.json')
+            if workflow not in ('minimal-v1', 'bash-v1', 'progress-v1'):
+                instruction = repair_guidance(instruction, runtime.swebench_workspace_dir, workflow, answer_check)
+            if workflow in ('retrieved-v1', 'contrastive-v1', 'minimal-v1', 'bash-v1', 'progress-v1'):
+                from evaluation.utils.baseline_test_context import prepare_baseline_test_context, attach_context
+                baseline_test_context = prepare_baseline_test_context(
+                    runtime, instance, answer_check, phase_dir / 'baseline_test_context.json',
+                    include_docs=workflow in ('minimal-v1', 'bash-v1', 'progress-v1'))
+                if workflow in ('minimal-v1', 'bash-v1', 'progress-v1'):
+                    from evaluation.utils.public_repair_handoff import minimal_handoff
+                    instruction = minimal_handoff(runtime.swebench_workspace_dir, answer_check,
+                                                  baseline_test_context, metadata.max_iterations)
+                else:
+                    instruction = attach_context(instruction, baseline_test_context)
+
+        controller_options = {}
+        if workflow in ('bash-v1', 'progress-v1'):
+            from openhands.core.setup import create_agent
+            from openhands.agenthub.codeact_agent.function_calling import CmdRunTool, FinishTool
+            repair_agent = create_agent(runtime, config)
+            repair_agent.tools = [CmdRunTool, FinishTool]
+            repair_tool_policy = ['execute_bash', 'finish']
+            controller_options['agent'] = repair_agent
+            if workflow == 'progress-v1':
+                from evaluation.utils.repair_progress import install_progress_reminders
+                repair_progress = install_progress_reminders(repair_agent)
+            instruction += '\nUse execute_bash for all repository reads, edits and checks; use finish when done.\n'
 
         # Here's how you can run the agent (similar to the `main` function) and get the final task state
         state: State | None = run_controller_bounded_cleanup(
@@ -705,6 +767,7 @@ def process_instance(
                 fake_user_response_fn=AGENT_CLS_TO_FAKE_USER_RESPONSE_FN[
                     metadata.agent_class
                 ],
+                **controller_options,
             )
         )
         # if fatal error, throw EvalError to trigger re-run
@@ -744,6 +807,11 @@ def process_instance(
         'interactions': fake_user.interactions,
         'mandatory_clarification': clarification,
         'answer_check': answer_check,
+        'reference_history': reference_history,
+        'repair_workspace': repair_workspace,
+        'baseline_test_context': baseline_test_context,
+        'repair_tool_policy': repair_tool_policy,
+        'repair_progress': repair_progress,
         'cleanup_error': cleanup_error,
         'finalization_error': finalization_error,
     }
@@ -842,6 +910,9 @@ if __name__ == '__main__':
             if os.environ.get('INTERACTION_PROMPT_VARIANT') == 'answer-check-v1' else None
         ),
         'answer_check_llm_config': os.environ.get('ANSWER_CHECK_LLM_CONFIG'),
+        'clarification_mode': os.environ.get('CLARIFICATION_MODE', 'adaptive'),
+        'clean_reference_history': os.environ.get('CLEAN_REFERENCE_HISTORY') == '1',
+        'repair_workflow': os.environ.get('REPAIR_WORKFLOW', 'original'),
         'answer_check_max_followups': (
             int(os.environ.get('ANSWER_CHECK_MAX_FOLLOWUPS', '2'))
             if os.environ.get('INTERACTION_PROMPT_VARIANT') == 'answer-check-v1' else None

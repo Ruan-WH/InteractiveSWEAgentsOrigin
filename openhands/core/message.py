@@ -64,6 +64,8 @@ class Message(BaseModel):
     name: str | None = None  # name of the tool
     # force string serializer
     force_string_serializer: bool = False
+    # Provider state is separate from the user-visible assistant text.
+    reasoning_content: str | None = Field(default=None, repr=False)
 
     @property
     def contains_image(self) -> bool:
@@ -119,6 +121,9 @@ class Message(BaseModel):
         """Add tool call keys if we have a tool call or response.
 
         NOTE: this is necessary for both native and non-native tool calling."""
+
+        if self.role == 'assistant' and self.reasoning_content is not None:
+            message_dict['reasoning_content'] = self.reasoning_content
 
         # an assistant message calling a tool
         if self.tool_calls is not None:

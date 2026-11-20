@@ -1,0 +1,41 @@
+{
+  "protocol": "assisted-local-repair-diagnostic",
+  "not_standard_pipeline": true,
+  "model": "qwen3.8-flash",
+  "response": {
+    "observation": "The previous fix incorrectly modified `Query.set_values` by appending ordering fields to `field_names`, which changed the output tuple shape for non-flat `values_list` (breaking the flat=False cases) and did not help the `project_first: true` path where ordering is applied after the select is already narrowed. The real problem is in `SQLCompiler.get_order_by`: for combinator queries, when an ORDER BY column is not found in the narrowed select, it raises DatabaseError. The fix should be at compile time: add the missing ordering column to `self.select` and to `self.query.values_select` (so it propagates to inner UNION queries via `get_combinator_sql`), without changing the user-facing result shape. The values_list iterables read only the columns they were told to read (based on `_fields`), so extra trailing columns are harmless.",
+    "edits": [
+      {
+        "path": "django/db/models/sql/compiler.py",
+        "old_str": "            if self.query.combinator:\n                src = resolved.get_source_expressions()[0]\n                # Relabel order by columns to raw numbers if this is a combined\n                # query; necessary since the columns can't be referenced by the\n                # fully qualified name and the simple column names may collide.\n                for idx, (sel_expr, _, col_alias) in enumerate(self.select):\n                    if is_ref and col_alias == src.refs:\n                        src = src.source\n                    elif col_alias:\n                        continue\n                    if src == sel_expr:\n                        resolved.set_source_expressions([RawSQL('%d' % (idx + 1), ())])\n                        break\n                else:\n                    raise DatabaseError('ORDER BY term does not match any column in the result set.')",
+        "new_str": "            if self.query.combinator:\n                src = resolved.get_source_expressions()[0]\n                # Relabel order by columns to raw numbers if this is a combined\n                # query; necessary since the columns can't be referenced by the\n                # fully qualified name and the simple column names may collide.\n                for idx, (sel_expr, _, col_alias) in enumerate(self.select):\n                    if is_ref and col_alias == src.refs:\n                        src = src.source\n                    elif col_alias:\n                        continue\n                    if src == sel_expr:\n                        resolved.set_source_expressions([RawSQL('%d' % (idx + 1), ())])\n                        break\n                else:\n                    # The ordering column was not in the select (e.g. the\n                    # select was narrowed via values()/values_list()).  Add\n                    # it so that the positional ORDER BY reference is valid\n                    # and so that get_combinator_sql propagates it to the\n                    # inner sub-queries.\n                    try:\n                        sql, params = self.compile(src, select_format=True)\n                    except EmptyResultSet:\n                        sql, params = '0', ()\n                    idx = len(self.select)\n                    self.select.append((src, (sql, params), None))\n                    # Propagate to inner combined queries via values_select.\n                    field_name = getattr(src, 'target', None)\n                    if field_name is not None and hasattr(field_name, 'attname'):\n                        attname = field_name.attname\n                        if attname not in self.query.values_select:\n                            self.query.values_select = tuple(self.query.values_select) + (attname,)\n                    resolved.set_source_expressions([RawSQL('%d' % (idx + 1), ())])"
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 17163,
+    "prompt_tokens": 12951,
+    "total_tokens": 30114,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 16384,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 17163
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "text_tokens": 12951
+    }
+  },
+  "requested_temperature": 1.0,
+  "requested_top_p": 0.95,
+  "extra_body": {
+    "enable_thinking": true,
+    "thinking_budget": 16384,
+    "preserve_thinking": true
+  },
+  "feedback_file": "evaluation/analysis/model_swap_10554_diagnosis_20261119/focused-feedback-round2-matrix.validation.json",
+  "public_test_files": []
+}

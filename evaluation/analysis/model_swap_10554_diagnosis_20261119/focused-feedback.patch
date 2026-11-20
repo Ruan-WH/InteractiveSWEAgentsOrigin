@@ -1,0 +1,25 @@
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index a791908caf..fbcf7bd25e 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -356,7 +356,19 @@ class SQLCompiler:
+                         resolved.set_source_expressions([RawSQL('%d' % (idx + 1), ())])
+                         break
+                 else:
+-                    raise DatabaseError('ORDER BY term does not match any column in the result set.')
++                    # The ordering column is not in the select list (e.g.
++                    # because values_list() projected it away). Add it to
++                    # self.select so the positional ORDER BY reference is
++                    # valid, and append the field to values_select so that
++                    # get_combinator_sql includes the column in the inner
++                    # queries of the union.  The Python-level result is
++                    # unaffected because _fields / flat iteration only
++                    # consumes the originally-requested columns.
++                    sql, params = self.compile(resolved, select_format=True)
++                    self.select.append((resolved, (sql, params), None))
++                    resolved.set_source_expressions([RawSQL('%d' % (len(self.select), ()))])
++                    if col not in self.query.values_select:
++                        self.query.values_select = (*self.query.values_select, col)
+             sql, params = self.compile(resolved)
+             # Don't add the same column twice, but the order direction is
+             # not taken into account so we strip it. When this entire method

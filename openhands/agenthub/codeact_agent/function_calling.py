@@ -4,6 +4,7 @@ This is similar to the functionality of `CodeActResponseParser`.
 """
 
 import json
+import jsonschema
 
 from browsergym.core.action.highlevel import HighLevelActionSet
 from litellm import (
@@ -503,6 +504,20 @@ def response_to_actions(response: ModelResponse) -> list[Action]:
                     f'Arguments for tool {tool_call.function.name} must be a JSON '
                     'object. Retry with the required named arguments.'
                 )
+            definitions = (CmdRunTool, IPythonTool, LLMBasedFileEditTool,
+                           StrReplaceEditorTool, BrowserTool, WebReadTool, FinishTool)
+            definition = next((item for item in definitions
+                               if item['function']['name'] == tool_call.function.name), None)
+            schema = definition['function'].get('parameters') if definition else None
+            if schema:
+                try:
+                    jsonschema.validate(arguments, schema)
+                except jsonschema.ValidationError as error:
+                    location = '.'.join(str(part) for part in error.absolute_path) or 'arguments'
+                    raise FunctionCallValidationError(
+                        f'Invalid arguments for tool {tool_call.function.name} at {location}: '
+                        f'{error.message[:400]}. Retry with all required fields and their declared types.'
+                    ) from error
             if tool_call.function.name == 'execute_bash':
                 action = CmdRunAction(**arguments)
             elif tool_call.function.name == 'execute_ipython_cell':

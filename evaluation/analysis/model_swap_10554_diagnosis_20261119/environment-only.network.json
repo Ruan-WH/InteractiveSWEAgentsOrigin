@@ -1,0 +1,10 @@
+[
+  {
+    "id": "d63090c8c1c3b6dbfd13aedecdd2a28e45f971a744d02b7b0853bada235e3949",
+    "networks": [
+      "ambig-swe-eval-offline-20261119"
+    ],
+    "internal": true,
+    "external_tcp_blocked": true
+  }
+]

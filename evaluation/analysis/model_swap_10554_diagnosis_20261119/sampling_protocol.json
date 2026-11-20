@@ -1,0 +1,12 @@
+{
+  "model": "qwen3.8-flash",
+  "requested_temperature": 1.0,
+  "requested_top_p": 0.95,
+  "previous_requested_temperature": 0.0,
+  "previous_requested_top_p": 1.0,
+  "reasoning_budget": 4096,
+  "preserve_thinking": true,
+  "guidance": "evidence-v1; no manual composition instruction or independent failure observation supplied",
+  "source": "https://help.aliyun.com/en/model-studio/qwen-api-via-openai-chat-completions",
+  "caveat": "Official documentation says thinking temperatures below0.6 are clamped; actual gateway effective sampling is not observable. Do not call prior requests proven greedy."
+}

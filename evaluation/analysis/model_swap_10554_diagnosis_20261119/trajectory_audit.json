@@ -1,0 +1,66 @@
+{
+  "ideal_no_followup": {
+    "agent_actions": 98,
+    "distinct_action_response_ids": 98,
+    "action_categories": {
+      "other_command_or_tool": 56,
+      "scratch_or_test_edit": 2,
+      "test_runner_command": 31,
+      "file_read": 5,
+      "production_edit": 4
+    },
+    "first_production_edit_step": 91,
+    "first_test_runner_step": 40,
+    "answer_check_followups": 0,
+    "patch_files": [
+      "a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py",
+      "a/django/db/models/sql/query.py b/django/db/models/sql/query.py",
+      "a/tests/queries/test_repro_tmp.py b/tests/queries/test_repro_tmp.py"
+    ],
+    "solver_error": "RuntimeError: Agent reached maximum iteration in headless mode. Current iteration: 100, max iteration: 100"
+  },
+  "partial_followup": {
+    "agent_actions": 100,
+    "distinct_action_response_ids": 100,
+    "action_categories": {
+      "other_command_or_tool": 62,
+      "file_read": 13,
+      "scratch_or_test_edit": 11,
+      "reproduction_command": 10,
+      "test_runner_command": 4
+    },
+    "first_production_edit_step": null,
+    "first_test_runner_step": 65,
+    "answer_check_followups": 1,
+    "patch_files": [
+      "a/repro.py b/repro.py",
+      "a/repro2.py b/repro2.py",
+      "a/repro3.py b/repro3.py",
+      "a/repro4.py b/repro4.py",
+      "a/repro5.py b/repro5.py",
+      "a/repro6.py b/repro6.py",
+      "a/repro7.py b/repro7.py",
+      "a/repro8.py b/repro8.py"
+    ],
+    "solver_error": "RuntimeError: Agent reached maximum iteration in headless mode. Current iteration: 100, max iteration: 100"
+  },
+  "partial_no_followup": {
+    "agent_actions": 100,
+    "distinct_action_response_ids": 100,
+    "action_categories": {
+      "other_command_or_tool": 49,
+      "test_runner_command": 16,
+      "scratch_or_test_edit": 3,
+      "reproduction_command": 24,
+      "production_edit": 6,
+      "file_read": 2
+    },
+    "first_production_edit_step": 23,
+    "first_test_runner_step": 17,
+    "answer_check_followups": 0,
+    "patch_files": [
+      "a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py"
+    ],
+    "solver_error": "RuntimeError: Agent reached maximum iteration in headless mode. Current iteration: 100, max iteration: 100"
+  }
+}

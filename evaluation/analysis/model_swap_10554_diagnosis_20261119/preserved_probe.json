@@ -1,0 +1,47 @@
+{
+  "benchmark_content_used": false,
+  "first_model": "qwen3.8-flash",
+  "second_model": "qwen3.8-flash",
+  "provider_state_preserved_exactly": true,
+  "provider_state_characters": 123,
+  "provider_state_sha256": "f2cbab5523a62f3a85132d6acb7ac24d451bcc835d6d46dda1c4e534c4d078a6",
+  "first_tool": "execute_bash",
+  "second_tool": "finish",
+  "usage": [
+    {
+      "completion_tokens": 61,
+      "prompt_tokens": 556,
+      "total_tokens": 617,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 29,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "completion_tokens": 34,
+      "prompt_tokens": 634,
+      "total_tokens": 668,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 18,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0
+      }
+    }
+  ],
+  "extra_body": {
+    "enable_thinking": true,
+    "thinking_budget": 4096,
+    "preserve_thinking": true
+  }
+}

@@ -24,6 +24,8 @@ def prepare_environment(settings):
     bypass = set(filter(None, (os.environ.get('NO_PROXY', '') + ','
                               + os.environ.get('no_proxy', '')).split(',')))
     bypass.update(('localhost', '127.0.0.1', '::1'))
+    if os.environ.get('EVAL_INTERNAL_RUNTIME_IP'):
+        bypass.add(os.environ['EVAL_INTERNAL_RUNTIME_IP'])
     os.environ['NO_PROXY'] = os.environ['no_proxy'] = ','.join(sorted(bypass))
     for name in ('HTTP_PROXY', 'HTTPS_PROXY', 'ALL_PROXY',
                  'http_proxy', 'https_proxy', 'all_proxy'):
@@ -83,7 +85,7 @@ def main():
     selection = parser.add_mutually_exclusive_group()
     selection.add_argument('--samples', type=int, choices=(1, 3, 4, 5), default=None)
     selection.add_argument('--instance-ids', nargs='+', help='Run these instance IDs in the supplied order')
-    parser.add_argument('--agent-llm-config', default='hidden_qwen_coder')
+    parser.add_argument('--agent-llm-config', default='hidden_qwen38_flash')
     parser.add_argument('--proxy-llm-config', default='hidden_qwen_coder')
     parser.add_argument('--check-only', action='store_true')
     parser.add_argument('--proxy-policy', choices=('original', 'grounded-v1'), default='original')
@@ -94,6 +96,12 @@ def main():
     parser.add_argument('--response-condition', choices=('ideal', 'partial'))
     parser.add_argument('--answer-check-policy', choices=('legacy-v5', 'simple-v1'), default='legacy-v5')
     parser.add_argument('--checker-llm-config', default='hidden_deepseek_flash')
+    parser.add_argument('--clarification-mode', choices=('adaptive', 'initial-only'), default='adaptive',
+                        help='initial-only hands off the fixed Q/A without checker calls or followups')
+    parser.add_argument('--clean-reference-history', action='store_true',
+                        help='Keep only baseline Git objects and remove runtime reference-answer metadata')
+    parser.add_argument('--repair-workflow', choices=('original', 'environment-v1', 'evidence-v1', 'composition-v1', 'composition-readable-v1', 'retrieved-v1', 'contrastive-v1', 'minimal-v1', 'bash-v1', 'progress-v1'), default='original',
+                        help='Opt-in Django diagnosis: align installed source; optionally add repair workflow guidance')
     args, extra = parser.parse_known_args()
     project = Path(__file__).resolve().parents[4]
     os.chdir(project)
@@ -113,6 +121,16 @@ def main():
         parser.error('--instance-ids must not contain duplicates')
     if bool(args.response_fixture) != bool(args.response_condition):
         parser.error('--response-fixture and --response-condition must be supplied together')
+    if args.clarification_mode == 'initial-only' and not args.response_fixture:
+        parser.error('initial-only requires fixed initial Q/A')
+    os.environ['CLARIFICATION_MODE'] = args.clarification_mode
+    if args.clean_reference_history and not args.response_fixture:
+        parser.error('reference cleanup currently requires the controlled experiment fixture')
+    os.environ['CLEAN_REFERENCE_HISTORY'] = '1' if args.clean_reference_history else '0'
+    if args.repair_workflow != 'original' and (
+            not args.clean_reference_history or any(not iid.startswith('django__django-') for iid in ids)):
+        parser.error('Repair workspace diagnosis requires clean reference history and Django instances')
+    os.environ['REPAIR_WORKFLOW'] = args.repair_workflow
     if args.response_fixture:
         if args.prompt_variant != 'answer-check-v1':
             parser.error('Fixed response fixtures require --prompt-variant answer-check-v1')
@@ -134,7 +152,7 @@ def main():
         print('Fixed response condition:', args.response_condition)
     print('Prompt variant:', args.prompt_variant)
     print('Agent model:', settings['model'])
-    print('User proxy:', os.environ['INTERACTION_USER_MODEL'], '(Qwen, not paper GPT-4o)')
+    print('User proxy:', os.environ['INTERACTION_USER_MODEL'])
     print('Selected instances:', ', '.join(ids))
     check_images(ids)
     if args.check_only:

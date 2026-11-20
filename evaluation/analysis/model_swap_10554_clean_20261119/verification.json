@@ -1,0 +1,9 @@
+{
+  "unit_tests_passed": 65,
+  "unit_test_command": "python -m pytest tests/unit/test_reference_history.py tests/unit/test_interaction_qwen.py tests/unit/test_simple_clarification.py tests/unit/test_simple_followup.py tests/unit/test_answer_check.py tests/unit/test_controlled_proxy.py -q",
+  "same_solver_config_as_previous": true,
+  "same_fixture_bytes_as_previous": true,
+  "preflight": "container_preflight.json",
+  "cleanup_scope": "Fresh disposable containers; host Git history and original Docker images are preserved.",
+  "limits": "Local references and runtime metadata are cleaned; this is not an adversarial network-isolation security boundary. Original no-web instruction remains."
+}

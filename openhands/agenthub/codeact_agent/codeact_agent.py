@@ -188,6 +188,9 @@ class CodeActAgent(Agent):
                 if assistant_msg.content is not None
                 else [],
                 tool_calls=assistant_msg.tool_calls,
+                reasoning_content=(getattr(assistant_msg, 'reasoning_content', None)
+                                   if (self.llm.config.extra_body or {}).get('preserve_thinking') is True
+                                   else None),
             )
             return []
         elif isinstance(action, AgentFinishAction):

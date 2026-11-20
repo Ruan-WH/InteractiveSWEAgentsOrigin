@@ -1,0 +1,74 @@
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index a791908caf..2c5e195b5d 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -356,7 +356,39 @@ class SQLCompiler:
+                         resolved.set_source_expressions([RawSQL('%d' % (idx + 1), ())])
+                         break
+                 else:
+-                    raise DatabaseError('ORDER BY term does not match any column in the result set.')
++                    # The ordering column may have been removed from the
++                    # outer select by values()/values_list() but still be
++                    # present in the underlying combined queries.  Search
++                    # the first combined query's select to find its true
++                    # position in the UNION output.
++                    found = False
++                    for cq in self.query.combined_queries:
++                        if cq.default_cols:
++                            # The combined query selects all model columns;
++                            # find src among the model's concrete fields.
++                            opts = cq.get_meta()
++                            initial_alias = cq.get_initial_alias()
++                            for pos, field in enumerate(opts.concrete_fields):
++                                col = field.get_col(initial_alias)
++                                if col == src:
++                                    resolved.set_source_expressions(
++                                        [RawSQL('%d' % (pos + 1), ())]
++                                    )
++                                    found = True
++                                    break
++                            if found:
++                                break
++                        elif src in cq.select:
++                            resolved.set_source_expressions(
++                                [RawSQL('%d' % (cq.select.index(src) + 1), ())]
++                            )
++                            found = True
++                            break
++                    if not found:
++                        raise DatabaseError(
++                            'ORDER BY term does not match any column in the '
++                            'result set.'
++                        )
+             sql, params = self.compile(resolved)
+             # Don't add the same column twice, but the order direction is
+             # not taken into account so we strip it. When this entire method
+@@ -419,6 +451,20 @@ class SQLCompiler:
+                     raise DatabaseError('LIMIT/OFFSET not allowed in subqueries of compound statements.')
+                 if compiler.get_order_by():
+                     raise DatabaseError('ORDER BY not allowed in subqueries of compound statements.')
++        # Determine which extra ordering fields must be propagated to the
++        # inner queries so that positional ORDER BY references remain valid
++        # even after the outer select has been narrowed via values().
++        ordering_extra = []
++        for f in self.query.order_by:
++            if isinstance(f, str) and f != '?':
++                fname = f.lstrip('-')
++                if (
++                    fname not in self.query.values_select
++                    and fname not in self.query.annotation_select
++                    and fname not in self.query.extra_select
++                ):
++                    ordering_extra.append(fname)
++
+         parts = ()
+         for compiler in compilers:
+             try:
+@@ -431,6 +477,7 @@ class SQLCompiler:
+                         *self.query.extra_select,
+                         *self.query.values_select,
+                         *self.query.annotation_select,
++                        *ordering_extra,
+                     ))
+                 part_sql, part_args = compiler.as_sql()
+                 if compiler.query.combinator:

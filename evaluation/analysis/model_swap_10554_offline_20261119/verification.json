@@ -1,0 +1,27 @@
+{
+  "unit_tests_passed": 65,
+  "unit_test_command": "python -m pytest tests/unit/test_reference_history.py tests/unit/test_interaction_qwen.py tests/unit/test_simple_clarification.py tests/unit/test_simple_followup.py tests/unit/test_answer_check.py tests/unit/test_controlled_proxy.py -q",
+  "targeted_ruff": "passed",
+  "git_diff_check": "passed",
+  "same_solver_config_as_previous": true,
+  "same_fixture_bytes_as_previous": true,
+  "runtime_network": {
+    "name": "ambig-swe-eval-offline-20261119",
+    "internal": true,
+    "address": "172.19.0.10"
+  },
+  "network_preflight": "network_preflight.json",
+  "real_history_cleanup_preflight": "../model_swap_10554_clean_20261119/container_preflight.json",
+  "scope": "All three official arms use new disposable containers, baseline-only Git objects, setup-only instance metadata, cleared pip cache and an internal Docker bridge without internet access. Host model API is unchanged.",
+  "interrupted_attempt": "../model_swap_10554_clean_20261119/ABORTED.txt",
+  "final_source_freeze_intact": true,
+  "all_questions_modules_equal_9208606": true,
+  "all_public_qa_preserved": true,
+  "all_graded_patches_match_raw": true,
+  "credential_scan_matches": 0,
+  "qa_comparison_to_previous": {
+    "same_initial": true,
+    "same_followup_question": false,
+    "same_followup_answer": true
+  }
+}

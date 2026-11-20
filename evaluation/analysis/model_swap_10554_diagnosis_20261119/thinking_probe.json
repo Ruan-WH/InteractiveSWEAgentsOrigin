@@ -1,0 +1,58 @@
+{
+  "extra_body": {
+    "enable_thinking": true,
+    "thinking_budget": 4096,
+    "preserve_thinking": false
+  },
+  "turns": [
+    {
+      "model": "qwen3.8-flash",
+      "finish_reason": "tool_calls",
+      "reasoning_characters": 151,
+      "tool_names": [
+        "inspect_value"
+      ],
+      "usage": {
+        "completion_tokens": 74,
+        "prompt_tokens": 315,
+        "total_tokens": 389,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 46,
+          "rejected_prediction_tokens": null,
+          "text_tokens": 74
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0,
+          "text_tokens": 315
+        }
+      }
+    },
+    {
+      "model": "qwen3.8-flash",
+      "finish_reason": "stop",
+      "reasoning_characters": 44,
+      "content": "49",
+      "usage": {
+        "completion_tokens": 22,
+        "prompt_tokens": 359,
+        "total_tokens": 381,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 17,
+          "rejected_prediction_tokens": null,
+          "text_tokens": 22
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0,
+          "text_tokens": 359
+        }
+      }
+    }
+  ],
+  "official_parameter_documentation": "https://help.aliyun.com/en/model-studio/qwen-api-via-openai-chat-completions"
+}

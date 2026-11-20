@@ -1,0 +1,50 @@
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index a791908caf..810e401651 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -356,7 +356,25 @@ class SQLCompiler:
+                         resolved.set_source_expressions([RawSQL('%d' % (idx + 1), ())])
+                         break
+                 else:
+-                    raise DatabaseError('ORDER BY term does not match any column in the result set.')
++                    # If the inner combined queries have their own explicit
++                    # values_select the column is genuinely not part of the
++                    # result set, so raise the usual error.
++                    if any(q.values_select for q in self.query.combined_queries):
++                        raise DatabaseError('ORDER BY term does not match any column in the result set.')
++                    # The ordering column was removed from the select by a
++                    # values()/values_list() call on the combinator queryset.
++                    # Add it back to the compiler select so the positional
++                    # ORDER BY reference is valid; get_combinator_sql will
++                    # propagate it to the inner queries.  Do NOT add it to
++                    # self.query.values_select so result iterables still
++                    # return only the caller-requested columns.
++                    try:
++                        sql, params = self.compile(src, select_format=True)
++                    except EmptyResultSet:
++                        sql, params = '0', ()
++                    idx = len(self.select)
++                    self.select.append((src, (sql, params), None))
++                    resolved.set_source_expressions([RawSQL('%d' % (idx + 1), ())])
+             sql, params = self.compile(resolved)
+             # Don't add the same column twice, but the order direction is
+             # not taken into account so we strip it. When this entire method
+@@ -427,9 +445,17 @@ class SQLCompiler:
+                 # the query on all combined queries, if not already set.
+                 if not compiler.query.values_select and self.query.values_select:
+                     compiler.query = compiler.query.clone()
++                    # Propagate the requested value fields plus any extra
++                    # columns that get_order_by() appended to self.select
++                    # (e.g. ordering columns removed by values_list()).
++                    select_fields = list(self.query.values_select)
++                    for sel_expr, _, _ in self.select:
++                        if hasattr(sel_expr, 'target') and hasattr(sel_expr.target, 'name'):
++                            if sel_expr.target.name not in select_fields:
++                                select_fields.append(sel_expr.target.name)
+                     compiler.query.set_values((
+                         *self.query.extra_select,
+-                        *self.query.values_select,
++                        *select_fields,
+                         *self.query.annotation_select,
+                     ))
+                 part_sql, part_args = compiler.as_sql()

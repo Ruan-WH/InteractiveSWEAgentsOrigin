@@ -1,0 +1,20 @@
+{
+  "protocol": "own-public-trace-repair-consolidation-v1",
+  "development_only": true,
+  "parent": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/max-bash-comparison",
+  "checkpoint_requested_tools": 40,
+  "checkpoint_completed_tools": 41,
+  "parent_response_index": 34,
+  "parent_request_file": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/max-bash-comparison/partial_followup/inference/princeton-nlp__SWE-bench_Verified-test/CodeActAgent/qwen3.8-max_maxiter_100_N_qwen38-diagnosis-max-bash-comparison/llm_completions/django__django-10554/openai__qwen3.8-max-1795071006.9419694.json",
+  "parent_request_sha256": "a360e4c44ab0b4c47ef477b6a0cc3ce1a34ef84c31d9a615a1d1500dbad4af93",
+  "actual_messages_sha256": "a2a24ce90fad1639fb4cf7adf19e8e051cc7ab1b90dd150e55dd2f054d8d3108",
+  "public_trace_characters": 165124,
+  "historical_system_and_private_reasoning_omitted": true,
+  "new_external_issue_observations_or_source": false,
+  "pre_agent_test_generation": false,
+  "requested_model": "qwen3.8-max",
+  "thinking_budget": 16384,
+  "max_output_tokens": 24576,
+  "budget_note": "Parent exploration plus one new synthesis call; larger per-call thinking budget. Not equal-token comparison.",
+  "researcher_guidance": "Development decision to split exploration and patch synthesis after fixed40 completed tools; no researcher-selected failure or implementation advice in input."
+}

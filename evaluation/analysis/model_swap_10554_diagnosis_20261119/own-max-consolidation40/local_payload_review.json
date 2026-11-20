@@ -1,0 +1,17 @@
+{
+  "actual_messages_sha256": "a2a24ce90fad1639fb4cf7adf19e8e051cc7ab1b90dd150e55dd2f054d8d3108",
+  "parent_request_sha256": "a360e4c44ab0b4c47ef477b6a0cc3ce1a34ef84c31d9a615a1d1500dbad4af93",
+  "config_secret_matches": 0,
+  "same_existing_gateway": true,
+  "parent_and_new_model_config": "hidden_qwen38_max_sampled",
+  "public_trace_exact_rendered_subset_of_parent_already_transmitted_messages": true,
+  "host_private_user_paths": 0,
+  "scope": "Only public Django task, literal clarification Q/A, public baseline tests/docs/source and agent-generated container scripts/observations; no host project source or attached private documents.",
+  "source_command_paths": [
+    "/testbed",
+    "/testbed/tests",
+    "/tmp/repro.py",
+    "/tmp/sweep.py"
+  ],
+  "original_approval_rejection": "Possible private source in full transcript; local exact-payload verification performed before resubmission."
+}

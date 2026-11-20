@@ -1,0 +1,13 @@
+{
+  "scope": "Autonomous own-trace consolidation development trial, using only parent public history; no researcher-provided failure probe or localized source",
+  "model": "qwen3.8-max",
+  "parent_completed_tools": 41,
+  "synthesis_model_calls": 1,
+  "target_successes": 0,
+  "regression_successes": 23,
+  "resolved": false,
+  "official_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/grader_controls/own-max-consolidation40-offline/logs/run_evaluation/10554-diagnosis-controls-20261119-own-max-consolidation40-offline/own-max-consolidation40-offline/django__django-10554/report.json",
+  "raw_patch": "own-max-consolidation40.patch",
+  "native_observation": "Returned to combined-query cloning hypothesis, despite parent observations of ordered-projection failure.",
+  "budget_limit": "Synthesis thinking16384 vs parent4096; not equal-token comparison."
+}

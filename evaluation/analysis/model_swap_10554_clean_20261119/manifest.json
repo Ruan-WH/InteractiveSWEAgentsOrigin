@@ -1,0 +1,39 @@
+{
+  "protocol": "10554-model-swap-three-arm-clean-v1",
+  "started_at": "2026-11-19T11:19:13.723887+08:00",
+  "instance_id": "django__django-10554",
+  "git_commit": "9208606b1c9cd1d8a2b60d5123c43b5b9e2a29e3",
+  "solver_config": {
+    "model": "openai/qwen3.8-flash",
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "max_input_tokens": 131072,
+    "max_output_tokens": 8192,
+    "num_retries": 3,
+    "extra_body": {
+      "enable_thinking": false
+    }
+  },
+  "proxy_model": "openai/qwen3-coder-flash",
+  "checker_model": "openai/deepseek-flash",
+  "max_solver_iterations": 100,
+  "max_followups": 2,
+  "handoff": "Unchanged checked_solving_instruction: public issue summary + literal Q/A transcript + uncertainty. No generated test component.",
+  "scope": "Single development case; gold previously inspected by researcher but never supplied to solver; not held-out evaluation.",
+  "history_policy": "baseline-only Git objects in workspace and testbed; runtime instance metadata stripped",
+  "previous_run_preserved": "model-swap-10554-20261119",
+  "whole_instance_retries": 0,
+  "arms": {},
+  "source_sha256": {
+    "evaluation/utils/simple_followup.py": "2cfbc47b14ce070fe1f8d6f3e35d1059f715756f0d03b746bc6c0a43b0522617",
+    "evaluation/utils/simple_clarification.py": "6ea01eb9c442e56840aa68db501cb13caff842c2a1c96c0455fa37dce2fc0865",
+    "evaluation/utils/answer_check.py": "7d74d8f6fd5d3e9c82a2dfd4e37c6ff15a61981d62e792a682803a415a7ddb8a",
+    "evaluation/utils/mandatory_clarification.py": "fc15cebb72132e42a6f0bf7754f33e352a4eb8cdd7e12153df168ed6b501c2e6",
+    "evaluation/utils/controlled_proxy.py": "001a3fec4e728ad0398703eef5b04b74092c77911c4de3df2113aa4d748d370c",
+    "evaluation/utils/reference_history.py": "bd59ca8a4d5a48a1cd00c383e2f6220f1e27746b999fe6529b83a9152f860a52",
+    "evaluation/benchmarks/swe_bench/interact_run_infer.py": "8e5a70adab2534e4b8304aed055e1cf1e0fba42def20ecf7765b1cf116520e00",
+    "evaluation/benchmarks/swe_bench/scripts/run_interact_qwen.py": "3852577d0b05df9c6f34153784e303c338ac1adfa5aa4e86940c82382f4f2ca8",
+    "evaluation/analysis/model_swap_10554_clean_20261119/run.py": "798038a416e2a9daee9756a762d918e59b89fc2ae9c4d20b8d5eeb4a751cf1d3"
+  },
+  "fixture_sha256": "2a30189a05acb45d960a5f121bc596e02c8491b32f2b64d54a3c6a10be745033"
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "id": "d1d66fb9da41c0a15525709728e5ad369b0d23078c83a3d0eba66566b3d35ea8",
+    "internal": true,
+    "networks": [
+      "ambig-swe-diagnosis-bash-20261119"
+    ],
+    "external_tcp_blocked": true
+  }
+]

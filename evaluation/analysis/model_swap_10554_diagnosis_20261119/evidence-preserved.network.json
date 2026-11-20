@@ -1,0 +1,10 @@
+[
+  {
+    "id": "d2e5e0783d86108dcaee3d7f0f0d38f28822886257d86086a739a115486bd4c2",
+    "networks": [
+      "ambig-swe-diagnosis-preserved-20261119"
+    ],
+    "internal": true,
+    "external_tcp_blocked": true
+  }
+]

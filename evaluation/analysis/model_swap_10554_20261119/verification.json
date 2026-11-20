@@ -1,0 +1,11 @@
+{
+  "unit_test_command": "python -m pytest tests/unit/test_interaction_qwen.py tests/unit/test_simple_clarification.py tests/unit/test_simple_followup.py tests/unit/test_answer_check.py tests/unit/test_controlled_proxy.py -q",
+  "unit_tests_passed": 57,
+  "targeted_ruff": "passed",
+  "git_diff_check": "passed",
+  "credential_exact_match_scan": {
+    "matches": 0,
+    "scope": "new analysis and raw experiment directories"
+  },
+  "notes": "Unit tests include both ideal and partial initial-only controls; checker and proxy API calls are forbidden in those checks."
+}

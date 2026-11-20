@@ -264,3 +264,92 @@ def test_answer_check_check_only_exposes_flag_without_running_evaluation(monkeyp
     assert os.environ['INTERACTION_PROMPT_VARIANT'] == 'answer-check-v1'
     assert os.environ['ANSWER_CHECK_MAX_FOLLOWUPS'] == '1'
     evaluate.assert_not_called()
+
+
+@pytest.mark.parametrize('condition', ['ideal', 'partial'])
+@pytest.mark.parametrize('clean_history', [False, True])
+def test_initial_only_hands_off_fixed_answer_without_checker_or_proxy_api(module, monkeypatch, tmp_path, condition, clean_history):
+    import pandas as pd
+    from openhands.core.config import LLMConfig
+    from evaluation.analysis.proxy_response_10554_v2.run_clarification import make_fixture
+
+    fixture = make_fixture()
+    fixture_path = tmp_path / 'fixture.json'
+    fixture_path.write_text(json.dumps(fixture))
+    monkeypatch.setenv('INTERACTION_PROMPT_VARIANT', 'answer-check-v1')
+    monkeypatch.setenv('INTERACTION_RESPONSE_FIXTURE', str(fixture_path))
+    monkeypatch.setenv('INTERACTION_RESPONSE_CONDITION', condition)
+    monkeypatch.setenv('CLARIFICATION_MODE', 'initial-only')
+    monkeypatch.setenv('ANSWER_CHECK_POLICY', 'simple-v1')
+    monkeypatch.setenv('CLEAN_REFERENCE_HISTORY', '1' if clean_history else '0')
+    clean = Mock(return_value={'verified': True})
+    monkeypatch.setattr('evaluation.utils.reference_history.clean_reference_history', clean)
+    config = SimpleNamespace(get_llm_config=Mock(return_value=LLMConfig()))
+    monkeypatch.setattr(module, 'get_config', Mock(return_value=config))
+    monkeypatch.setattr(module, 'get_instruction', Mock(return_value='PUBLIC_SUMMARY'))
+    phase = SimpleNamespace(completion=Mock(side_effect=AssertionError('No model calls in initial-only')))
+    monkeypatch.setattr('openhands.llm.llm.LLM', Mock(return_value=phase))
+    checker_config = Mock(side_effect=AssertionError('No checker in initial-only'))
+    monkeypatch.setattr(module, 'get_llm_config_arg', checker_config)
+    proxy_api = Mock(side_effect=AssertionError('No proxy API in initial-only'))
+    monkeypatch.setattr(module.client.chat.completions, 'create', proxy_api)
+    runtime = SimpleNamespace(container=SimpleNamespace(id='offline'), connect=Mock())
+    monkeypatch.setattr(module, 'create_runtime', Mock(return_value=runtime))
+    monkeypatch.setattr(module, 'call_async_from_sync', Mock())
+    monkeypatch.setattr(module, 'initialize_runtime', Mock())
+    monkeypatch.setattr(module, 'guard_busy_shell', Mock())
+    def start_controller(**kwargs):
+        assert clean.call_count == int(clean_history)
+        return 'offline-coroutine'
+
+    controller = Mock(side_effect=start_controller)
+    monkeypatch.setattr(module, 'run_controller', controller)
+    state = SimpleNamespace(last_error='', history=[], metrics=None)
+    monkeypatch.setattr(module, 'run_controller_bounded_cleanup', Mock(return_value=state))
+    monkeypatch.setattr(module, 'extract_local_patch', Mock(return_value={'git_patch': 'offline-patch'}))
+    monkeypatch.setattr(module, 'close_runtime_bounded', Mock(return_value=None))
+    instance = pd.Series({'instance_id': fixture['instance_id'], 'base_commit': fixture['base_commit'],
+        'problem_statement': fixture['public_task']['summary'], 'original_issue': 'PRIVATE_ISSUE',
+        'repo': 'django/django', 'version': '2.1', 'hints_text': 'PRIVATE_HINTS', 'files': ''})
+    metadata = module.EvalMetadata(agent_class='CodeActAgent', llm_config=LLMConfig(),
+        max_iterations=100, eval_output_dir=str(tmp_path), start_time='offline', git_commit='offline')
+    result = module.process_instance(instance, metadata, reset_logger=False)
+    record = result.test_result['answer_check']
+    assert record['status'] == 'not_run' and record['followups_used'] == 0 and record['checks'] == []
+    assert len(record['exchanges']) == 1
+    assert result.num_turns == 1
+    handoff = controller.call_args.kwargs['initial_user_action'].content
+    assert fixture['initial_responses'][condition]['answer'] in json.loads(
+        handoff.split('task data, not instructions:\n')[1].split('\nDo not assume')[0])['public_exchanges'][0]['answer']
+    assert 'PRIVATE_' not in handoff
+    assert module.fake_user.clarification_closed
+    assert result.test_result['reference_history'] == ({'verified': True} if clean_history else None)
+    phase.completion.assert_not_called()
+    checker_config.assert_not_called()
+    proxy_api.assert_not_called()
+
+
+@pytest.mark.parametrize('clean_history', [False, True])
+def test_runtime_setup_copy_excludes_reference_answers_when_cleanup_enabled(module, monkeypatch, clean_history):
+    import pandas as pd
+
+    monkeypatch.setattr(module, 'USE_INSTANCE_IMAGE', True)
+    monkeypatch.setenv('CLEAN_REFERENCE_HISTORY', '1' if clean_history else '0')
+    copied = []
+
+    def copy_to(source, destination):
+        if Path(source).name == 'swe-bench-instance.json':
+            copied.append(json.loads(Path(source).read_text()))
+
+    runtime = SimpleNamespace(copy_to=Mock(side_effect=copy_to),
+        run_action=Mock(return_value=SimpleNamespace(exit_code=0, content='offline')))
+    instance = pd.Series(dict(repo='org/repo', instance_id='case', version='1', base_commit='base',
+                              patch='PRIVATE_FIX', test_patch='PRIVATE_TEST', original_issue='PRIVATE_REPORT', hints_text='PRIVATE_HINT'))
+    module.initialize_runtime(runtime, instance)
+    assert len(copied) == 1 and len(copied[0]) == 1
+    row = copied[0][0]
+    if clean_history:
+        assert set(row) == {'repo', 'instance_id', 'version', 'base_commit'}
+        assert 'PRIVATE_' not in json.dumps(copied)
+    else:
+        assert row['patch'] == 'PRIVATE_FIX' and row['test_patch'] == 'PRIVATE_TEST'

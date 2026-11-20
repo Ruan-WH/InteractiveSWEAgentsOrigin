@@ -12,6 +12,7 @@ from evaluation.utils.interaction_runtime import (
     extract_local_patch,
     guard_busy_shell,
     run_controller_bounded_cleanup,
+    scope_runtime_cleanup,
 )
 from openhands.events.action import CmdRunAction
 from openhands.events.observation import CmdOutputObservation, ErrorObservation
@@ -106,3 +107,16 @@ def test_normal_runtime_cleanup_has_no_error():
     runtime = SimpleNamespace(close=Mock())
     assert close_runtime_bounded(runtime) is None
     runtime.close.assert_called_once()
+
+
+def test_exit_cleanup_only_removes_owned_container(monkeypatch):
+    register, unregister = Mock(), Mock()
+    monkeypatch.setattr('evaluation.utils.interaction_runtime.atexit.register', register)
+    monkeypatch.setattr('evaluation.utils.interaction_runtime.atexit.unregister', unregister)
+    own, other = Mock(), Mock()
+    runtime = SimpleNamespace(container=own)
+    scope_runtime_cleanup(runtime)
+    unregister.assert_called_once()
+    register.call_args.args[0]()
+    own.remove.assert_called_once_with(force=True)
+    other.remove.assert_not_called()

@@ -1,0 +1,47 @@
+{
+  "protocol": "localization-assisted-diagnostic-only",
+  "model": "qwen3.8-flash",
+  "not_standard_pipeline": true,
+  "additional_guidance": "\nUse the operations named in the public issue and Q/A to check their interaction, not only whether they share internal objects. For queryset tasks involving combination, ordering, and projection, distinguish these requirements: the reported original/derived evaluation sequence remains stable; clearing ordering affects only the derived query; projecting the returned columns of an explicitly ordered combined query preserves its requested ordering and output shape. Check these operation compositions using existing repository models and actual result values. A passing cleared-ordering reproduction does not establish that preserving ordering during projection works. Do not assume object cloning is the required fix, and do not drop ordering to avoid an exception. Find the concrete failed composition before choosing the implementation.\n",
+  "source_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+  "public_input": {
+    "task_summary": "There is an issue with combining querysets using union operations in Django, particularly when ordering is applied to derived querysets. This results in a programming error during query execution, as the ordering position is not included in the select list. The problem arises when attempting to re-evaluate the original queryset after applying an order_by operation, leading to a traceback error. The issue may be related to a previously reported problem.",
+    "public_exchanges": [
+      {
+        "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+        "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+      },
+      {
+        "question": "What exact operations were performed after the successful `qs` display—including the union/order_by calls and the subsequent query or evaluation—that triggered the `ProgrammingError: ORDER BY position 4 is not in select list`?",
+        "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+      }
+    ]
+  },
+  "response": {
+    "observation": "When `qs.order_by().values_list('pk', flat=True)` is evaluated on a combined (union) queryset, `get_combinator_sql` calls `compiler.query.set_values(...)` on clones of the sub-queries. However, `set_values` calls `clear_select_fields()` which sets `self.default_cols = False` on the clone, and then `add_fields` which calls `set_select(cols)` which also sets `self.default_cols = False`. The problem is that `clone()` in `Query.clone()` does NOT deep-clone `combined_queries` — it just copies the reference. So when the derived queryset's query has its `values_select` set and the combinator compiler processes the sub-queries, the sub-query objects referenced in `combined_queries` can be mutated. Specifically, `set_values` on the derived query sets `self.query.values_select`, and then `get_combinator_sql` propagates this to the sub-queries via their compilers. But the real issue is that `Query.clone()` does not clone `combined_queries`, so the sub-query objects are shared. When `compiler.query.set_values(...)` is called (after cloning the compiler's query), it modifies the clone — but the original sub-queries in `qs.query.combined_queries` remain unmodified. The actual mutation happens because `set_values` on the derived query object (which shares `combined_queries` with the original `qs` via shallow copy) sets `values_select` on that shared query object, and when `qs` is later re-evaluated, the combinator logic sees `values_select` is set and restricts the select list to just 'pk', but the ORDER BY still references the 'order' column at position 4 which is no longer in the select list.",
+    "edits": [
+      {
+        "path": "django/db/models/sql/query.py",
+        "old_str": "    def clone(self):\n        \"\"\"\n        Return a copy of the current Query. A lightweight alternative to\n        to deepcopy().\n        \"\"\"\n        obj = Empty()\n        obj.__class__ = self.__class__\n        # Copy references to everything.\n        obj.__dict__ = self.__dict__.copy()\n        # Clone attributes that can't use shallow copy.\n        obj.alias_refcount = self.alias_refcount.copy()\n        obj.alias_map = self.alias_map.copy()\n        obj.external_aliases = self.external_aliases.copy()\n        obj.table_map = self.table_map.copy()\n        obj.where = self.where.clone()\n        obj.annotations = self.annotations.copy()\n        if self.annotation_select_mask is None:\n            obj.annotation_select_mask = None\n        else:\n            obj.annotation_select_mask = self.annotation_select_mask.copy()\n        # _annotation_select_cache cannot be copied, as doing so breaks the\n        # (necessary) state in which both annotations and\n        # _annotation_select_cache point to the same underlying objects.\n        # It will get re-populated in the cloned queryset the next time it's\n        # used.\n        obj._annotation_select_cache = None\n        obj.extra = self.extra.copy()\n        if self.extra_select_mask is None:\n            obj.extra_select_mask = None\n        else:\n            obj.extra_select_mask = self.extra_select_mask.copy()\n        if self._extra_select_cache is None:\n            obj._extra_select_cache = None\n        else:\n            obj._extra_select_cache = self._extra_select_cache.copy()\n        if 'subq_aliases' in self.__dict__:\n            obj.subq_aliases = self.subq_aliases.copy()\n        obj.used_aliases = self.used_aliases.copy()\n        obj._filtered_relations = self._filtered_relations.copy()\n        # Clear the cached_property\n        try:\n            del obj.base_table\n        except AttributeError:\n            pass\n        return obj",
+        "new_str": "    def clone(self):\n        \"\"\"\n        Return a copy of the current Query. A lightweight alternative to\n        to deepcopy().\n        \"\"\"\n        obj = Empty()\n        obj.__class__ = self.__class__\n        # Copy references to everything.\n        obj.__dict__ = self.__dict__.copy()\n        # Clone attributes that can't use shallow copy.\n        obj.alias_refcount = self.alias_refcount.copy()\n        obj.alias_map = self.alias_map.copy()\n        obj.external_aliases = self.external_aliases.copy()\n        obj.table_map = self.table_map.copy()\n        obj.where = self.where.clone()\n        obj.annotations = self.annotations.copy()\n        if self.annotation_select_mask is None:\n            obj.annotation_select_mask = None\n        else:\n            obj.annotation_select_mask = self.annotation_select_mask.copy()\n        # _annotation_select_cache cannot be copied, as doing so breaks the\n        # (necessary) state in which both annotations and\n        # _annotation_select_cache point to the same underlying objects.\n        # It will get re-populated in the cloned queryset the next time it's\n        # used.\n        obj._annotation_select_cache = None\n        obj.extra = self.extra.copy()\n        if self.extra_select_mask is None:\n            obj.extra_select_mask = None\n        else:\n            obj.extra_select_mask = self.extra_select_mask.copy()\n        if self._extra_select_cache is None:\n            obj._extra_select_cache = None\n        else:\n            obj._extra_select_cache = self._extra_select_cache.copy()\n        if 'subq_aliases' in self.__dict__:\n            obj.subq_aliases = self.subq_aliases.copy()\n        obj.used_aliases = self.used_aliases.copy()\n        obj._filtered_relations = self._filtered_relations.copy()\n        # Clone combined_queries so that mutations to the clone's sub-queries\n        # (e.g. via set_values in get_combinator_sql) don't affect the original.\n        if self.combined_queries:\n            obj.combined_queries = tuple(\n                query.clone() for query in self.combined_queries\n            )\n        # Clear the cached_property\n        try:\n            del obj.base_table\n        except AttributeError:\n            pass\n        return obj"
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 5414,
+    "prompt_tokens": 8087,
+    "total_tokens": 13501,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 4096,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 5414
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "text_tokens": 8087
+    }
+  }
+}

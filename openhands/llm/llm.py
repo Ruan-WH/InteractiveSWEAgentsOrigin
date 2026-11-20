@@ -129,8 +129,12 @@ class LLM(RetryMixin, DebugMixin):
             self.tokenizer = None
 
         # set up the completion function
+        completion_fn = litellm_completion
+        if (self.config.model.startswith('openai/qwen')
+                and (self.config.extra_body or {}).get('preserve_thinking') is True):
+            from openhands.llm.qwen_compatible import completion as completion_fn
         self._completion = partial(
-            litellm_completion,
+            completion_fn,
             model=self.config.model,
             api_key=self.config.api_key,
             base_url=self.config.base_url,

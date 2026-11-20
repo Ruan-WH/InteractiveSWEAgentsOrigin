@@ -1,0 +1,9 @@
+Creating test database for alias 'default'...
+.............s..........s.
+----------------------------------------------------------------------
+Ran 26 tests in 0.016s
+
+OK (skipped=2)
+Destroying test database for alias 'default'...
+Testing against Django installed in '/testbed/django'
+System check identified no issues (1 silenced).

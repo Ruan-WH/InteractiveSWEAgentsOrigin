@@ -1,0 +1,16 @@
+{
+  "scope": "Assisted Qwen Max capability control, NOT autonomous partial success and NOT Flash success",
+  "model": "qwen3.8-max",
+  "benchmark_resolved": true,
+  "target_success": 2,
+  "regression_success": 23,
+  "raw_patch_sha256": "572a40747571f604b96a9047b30265203ffc281f895118116cc3b9682341dac9",
+  "candidate_exactly_matches_prediction_and_applied_patch": true,
+  "official_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/grader_controls/focused-max-same-feedback-offline/logs/run_evaluation/10554-diagnosis-controls-20261119-focused-max-same-feedback-offline/focused-max-same-feedback-offline/django__django-10554/report.json",
+  "input_messages_identical_to_flash_round4": true,
+  "assistance": "Public task/Q&A + localized baseline method bodies + independent public SQLite observations + previous candidate and public execution feedback. No reference patch or hidden-test feedback supplied.",
+  "evaluation_retry": "First grader terminated on SSL fetching dependency lists; second used exact same environment-commit Git blobs for those HTTP responses; reused existing image and unchanged official tests/parser.",
+  "limits": "Single development case; expanded tuple-shape tests still fail, so this is benchmark success, not a general complete Django ORM fix.",
+  "official_eval_script_identical_to_gold_control": true,
+  "eval_script_sha256": "4f4b7d33a33c2a089b11ed7351e09cd6d320243ddcfafc237a42da1b7af0c27b"
+}

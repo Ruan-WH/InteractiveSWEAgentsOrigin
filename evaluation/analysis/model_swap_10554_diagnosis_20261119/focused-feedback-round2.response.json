@@ -1,0 +1,43 @@
+{
+  "protocol": "assisted-local-repair-diagnostic",
+  "not_standard_pipeline": true,
+  "model": "qwen3.8-flash",
+  "response": {
+    "observation": "The previous fix was applied in `get_order_by` at compile time, which broke `test_order_raises_on_non_selected_column` because it silently adds ANY missing column to the select rather than only preserving ordering fields that existed before the select was narrowed. Additionally, the code had a string-formatting bug (`RawSQL('%d' % (len(self.select), ()))` — the tuple makes `%` format fail). The correct fix is at the `Query.set_values` level: when the select is narrowed by `values()`/`values_list()`, preserve any concrete model-field names still referenced by existing `order_by` entries, appending them after the user-requested fields. This way the ordering column remains in the positional select for combinator queries, while `values_select` ensures the column propagates to inner union queries. Cases where ordering is added AFTER values narrowing (like the existing test) are unaffected because `set_values` is not called again.",
+    "edits": [
+      {
+        "path": "django/db/models/sql/query.py",
+        "old_str": "        if fields:\n            field_names = []\n            extra_names = []\n            annotation_names = []\n            if not self.extra and not self.annotations:\n                # Shortcut - if there are no extra or annotations, then\n                # the values() clause must be just field names.\n                field_names = list(fields)\n            else:\n                self.default_cols = False\n                for f in fields:\n                    if f in self.extra_select:\n                        extra_names.append(f)\n                    elif f in self.annotation_select:\n                        annotation_names.append(f)\n                    else:\n                        field_names.append(f)\n            self.set_extra_mask(extra_names)\n            self.set_annotation_mask(annotation_names)\n        else:\n            field_names = [f.attname for f in self.model._meta.concrete_fields]\n\n        self.values_select = tuple(field_names)\n        self.add_fields(field_names, True)",
+        "new_str": "        if fields:\n            field_names = []\n            extra_names = []\n            annotation_names = []\n            if not self.extra and not self.annotations:\n                # Shortcut - if there are no extra or annotations, then\n                # the values() clause must be just field names.\n                field_names = list(fields)\n            else:\n                self.default_cols = False\n                for f in fields:\n                    if f in self.extra_select:\n                        extra_names.append(f)\n                    elif f in self.annotation_select:\n                        annotation_names.append(f)\n                    else:\n                        field_names.append(f)\n            self.set_extra_mask(extra_names)\n            self.set_annotation_mask(annotation_names)\n        else:\n            field_names = [f.attname for f in self.model._meta.concrete_fields]\n\n        # Preserve fields referenced by existing ordering so that positional\n        # ORDER BY references remain valid for combinator queries. Only add\n        # simple concrete model-field names that are not already requested.\n        for ordering in self.order_by:\n            if isinstance(ordering, str):\n                col = ordering.lstrip('-')\n                if LOOKUP_SEP not in col and self.model:\n                    try:\n                        self.model._meta.get_field(col)\n                    except FieldDoesNotExist:\n                        continue\n                    if col not in field_names:\n                        field_names.append(col)\n\n        self.values_select = tuple(field_names)\n        self.add_fields(field_names, True)"
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 17124,
+    "prompt_tokens": 12067,
+    "total_tokens": 29191,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 16384,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 17124
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "text_tokens": 12067
+    }
+  },
+  "requested_temperature": 1.0,
+  "requested_top_p": 0.95,
+  "extra_body": {
+    "enable_thinking": true,
+    "thinking_budget": 16384,
+    "preserve_thinking": true
+  },
+  "feedback_file": "evaluation/analysis/model_swap_10554_diagnosis_20261119/focused-feedback.validation.json",
+  "public_test_files": [
+    "tests/queries/test_qs_combinators.py"
+  ]
+}

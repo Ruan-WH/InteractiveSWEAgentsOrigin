@@ -1,0 +1,25 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 08d7faf194..13d95bc331 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -2059,6 +2059,20 @@ class Query(BaseExpression):
+         else:
+             field_names = [f.attname for f in self.model._meta.concrete_fields]
+ 
++        # Preserve fields referenced by existing ordering so that positional
++        # ORDER BY references remain valid for combinator queries. Only add
++        # simple concrete model-field names that are not already requested.
++        for ordering in self.order_by:
++            if isinstance(ordering, str):
++                col = ordering.lstrip('-')
++                if LOOKUP_SEP not in col and self.model:
++                    try:
++                        self.model._meta.get_field(col)
++                    except FieldDoesNotExist:
++                        continue
++                    if col not in field_names:
++                        field_names.append(col)
++
+         self.values_select = tuple(field_names)
+         self.add_fields(field_names, True)
+ 

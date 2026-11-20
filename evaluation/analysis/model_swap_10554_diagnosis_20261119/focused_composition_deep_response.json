@@ -1,0 +1,53 @@
+{
+  "protocol": "localization-assisted-diagnostic-only",
+  "model": "qwen3.8-flash",
+  "not_standard_pipeline": true,
+  "additional_guidance": "\nUse the operations named in the public issue and Q/A to check their interaction, not only whether they share internal objects. For queryset tasks involving combination, ordering, and projection, distinguish these requirements: the reported original/derived evaluation sequence remains stable; clearing ordering affects only the derived query; projecting the returned columns of an explicitly ordered combined query preserves its requested ordering and output shape. Check these operation compositions using existing repository models and actual result values. A passing cleared-ordering reproduction does not establish that preserving ordering during projection works. Do not assume object cloning is the required fix, and do not drop ordering to avoid an exception. Find the concrete failed composition before choosing the implementation.\n",
+  "extra_body": {
+    "enable_thinking": true,
+    "thinking_budget": 16384,
+    "preserve_thinking": true
+  },
+  "max_output_tokens": 24576,
+  "source_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+  "public_input": {
+    "task_summary": "There is an issue with combining querysets using union operations in Django, particularly when ordering is applied to derived querysets. This results in a programming error during query execution, as the ordering position is not included in the select list. The problem arises when attempting to re-evaluate the original queryset after applying an order_by operation, leading to a traceback error. The issue may be related to a previously reported problem.",
+    "public_exchanges": [
+      {
+        "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+        "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+      },
+      {
+        "question": "What exact operations were performed after the successful `qs` display—including the union/order_by calls and the subsequent query or evaluation—that triggered the `ProgrammingError: ORDER BY position 4 is not in select list`?",
+        "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+      }
+    ]
+  },
+  "response": {
+    "observation": "The issue is that when `qs.order_by().values_list('pk', flat=True)` is evaluated on a union queryset with ordering, the `set_values` call on the derived combinator query modifies shared state (specifically the `values_select` attribute) that the original `qs`'s query also references. When the original `qs` is re-evaluated, the sub-queries in `combined_queries` have had their select lists reduced, but the ORDER BY position (computed from the original full select list) still references position 4, causing the database error. The fix is to ensure that `set_values` on a combinator query clones its `combined_queries` so that modifications to the derived query's sub-queries don't leak back to the original queryset.",
+    "edits": [
+      {
+        "path": "django/db/models/sql/query.py",
+        "old_str": "    def set_values(self, fields):\n        self.select_related = False\n        self.clear_deferred_loading()\n        self.clear_select_fields()\n\n        if self.group_by is True:",
+        "new_str": "    def set_values(self, fields):\n        self.select_related = False\n        self.clear_deferred_loading()\n        self.clear_select_fields()\n\n        if self.combinator:\n            self.combined_queries = tuple(\n                query.clone() for query in self.combined_queries\n            )\n\n        if self.group_by is True:"
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 16694,
+    "prompt_tokens": 8061,
+    "total_tokens": 24755,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 16384,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 16694
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "text_tokens": 8061
+    }
+  }
+}

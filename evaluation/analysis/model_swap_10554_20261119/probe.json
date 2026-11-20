@@ -1,0 +1,89 @@
+{
+  "requested_model": "qwen3.8-flash",
+  "tests": [
+    {
+      "kind": "tool",
+      "response": {
+        "id": "chatcmpl-64384f3a-6001-95a4-87ee-dce21ceb1ab1",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "call_187bb849e6494f08a936a564",
+                  "function": {
+                    "arguments": "{\"number\": 7}",
+                    "name": "report_number"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ]
+            }
+          }
+        ],
+        "created": 1795056101,
+        "model": "qwen3.8-flash",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 19,
+          "prompt_tokens": 292,
+          "total_tokens": 311,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0,
+            "text_tokens": 292
+          }
+        }
+      }
+    },
+    {
+      "kind": "json",
+      "response": {
+        "id": "chatcmpl-6e91b25d-ff5a-937b-ae1c-7ff5af5af487",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"ok\":true}",
+              "refusal": null,
+              "role": "assistant",
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null
+            }
+          }
+        ],
+        "created": 1795056102,
+        "model": "qwen3.8-flash",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 5,
+          "prompt_tokens": 36,
+          "total_tokens": 41,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0,
+            "text_tokens": 36
+          }
+        }
+      }
+    }
+  ]
+}

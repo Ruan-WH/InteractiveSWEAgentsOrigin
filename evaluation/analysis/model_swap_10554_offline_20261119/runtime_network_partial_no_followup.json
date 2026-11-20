@@ -1,0 +1,8 @@
+{
+  "external_tcp_blocked": true,
+  "arm": "partial_no_followup",
+  "container": "openhands-runtime-48c1460a-625f-404e-953e-953ef3e67353-62952a14de229936",
+  "networks_internal": {
+    "ambig-swe-eval-offline-20261119": true
+  }
+}

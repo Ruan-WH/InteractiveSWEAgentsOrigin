@@ -1,0 +1,30 @@
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index a791908caf..970e0baaf5 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -356,7 +356,24 @@ class SQLCompiler:
+                         resolved.set_source_expressions([RawSQL('%d' % (idx + 1), ())])
+                         break
+                 else:
+-                    raise DatabaseError('ORDER BY term does not match any column in the result set.')
++                    # The ordering column was not in the select (e.g. the
++                    # select was narrowed via values()/values_list()).  Add
++                    # it so that the positional ORDER BY reference is valid
++                    # and so that get_combinator_sql propagates it to the
++                    # inner sub-queries.
++                    try:
++                        sql, params = self.compile(src, select_format=True)
++                    except EmptyResultSet:
++                        sql, params = '0', ()
++                    idx = len(self.select)
++                    self.select.append((src, (sql, params), None))
++                    # Propagate to inner combined queries via values_select.
++                    field_name = getattr(src, 'target', None)
++                    if field_name is not None and hasattr(field_name, 'attname'):
++                        attname = field_name.attname
++                        if attname not in self.query.values_select:
++                            self.query.values_select = tuple(self.query.values_select) + (attname,)
++                    resolved.set_source_expressions([RawSQL('%d' % (idx + 1), ())])
+             sql, params = self.compile(resolved)
+             # Don't add the same column twice, but the order direction is
+             # not taken into account so we strip it. When this entire method

@@ -1,0 +1,7 @@
+{
+  "network": "ambig-swe-eval-offline-20261119",
+  "internal": true,
+  "host_runtime_http_ok": true,
+  "direct_external_tcp_blocked": true,
+  "pip_download_blocked": true
+}

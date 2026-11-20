@@ -1,0 +1,16 @@
+{
+  "chosen_model": "qwen3.8-flash",
+  "reason": "Newer low-cost Qwen option listed on the existing gateway; tools and JSON probed successfully.",
+  "official_reference": "https://help.aliyun.com/en/model-studio/text-generation-model/",
+  "official_price_reference": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+  "official_example_price_usd_per_million": {
+    "scope": "China Beijing / selected global deployments, <=1M context",
+    "input": 0.113,
+    "output": 0.382
+  },
+  "price_limit": "Official list price only, not a verified quote or invoice from the configured gateway.",
+  "probe": "probe.json",
+  "solver_thinking": "explicitly disabled, matching non-thinking old coder baseline",
+  "old_solver": "qwen3-coder-flash",
+  "only_solver_changed": true
+}

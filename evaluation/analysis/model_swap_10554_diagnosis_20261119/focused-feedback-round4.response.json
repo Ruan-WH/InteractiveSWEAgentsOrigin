@@ -1,0 +1,48 @@
+{
+  "protocol": "assisted-local-repair-diagnostic",
+  "not_standard_pipeline": true,
+  "model": "qwen3.8-flash",
+  "response": {
+    "observation": "The previous fix appended the ordering column to both `self.select` and `self.query.values_select` in `get_order_by`. The `values_select` mutation caused inconsistent UNION column counts because `get_combinator_sql` only propagates `values_select` to inner queries that don't already have one set — adding a column after the fact made one sub-query wider than the other, triggering 'SELECTs to the left and right of UNION do not have the same number of result columns'. The fix must ensure ordering columns are included in inner query output *at propagation time* (in `get_combinator_sql`) so all sub-queries widen consistently, and the positional lookup in `get_order_by` must also search the underlying combined-query select lists (not just the narrowed outer select) when the user's select does not match.",
+    "edits": [
+      {
+        "path": "django/db/models/sql/compiler.py",
+        "old_str": "            if self.query.combinator:\n                src = resolved.get_source_expressions()[0]\n                # Relabel order by columns to raw numbers if this is a combined\n                # query; necessary since the columns can't be referenced by the\n                # fully qualified name and the simple column names may collide.\n                for idx, (sel_expr, _, col_alias) in enumerate(self.select):\n                    if is_ref and col_alias == src.refs:\n                        src = src.source\n                    elif col_alias:\n                        continue\n                    if src == sel_expr:\n                        resolved.set_source_expressions([RawSQL('%d' % (idx + 1), ())])\n                        break\n                else:\n                    raise DatabaseError('ORDER BY term does not match any column in the result set.')",
+        "new_str": "            if self.query.combinator:\n                src = resolved.get_source_expressions()[0]\n                # Relabel order by columns to raw numbers if this is a combined\n                # query; necessary since the columns can't be referenced by the\n                # fully qualified name and the simple column names may collide.\n                for idx, (sel_expr, _, col_alias) in enumerate(self.select):\n                    if is_ref and col_alias == src.refs:\n                        src = src.source\n                    elif col_alias:\n                        continue\n                    if src == sel_expr:\n                        resolved.set_source_expressions([RawSQL('%d' % (idx + 1), ())])\n                        break\n                else:\n                    # The ordering column may have been removed from the\n                    # outer select by values()/values_list() but still be\n                    # present in the underlying combined queries.  Search\n                    # the first combined query's select to find its true\n                    # position in the UNION output.\n                    found = False\n                    for cq in self.query.combined_queries:\n                        if cq.default_cols:\n                            # The combined query selects all model columns;\n                            # find src among the model's concrete fields.\n                            opts = cq.get_meta()\n                            initial_alias = cq.get_initial_alias()\n                            for pos, field in enumerate(opts.concrete_fields):\n                                col = field.get_col(initial_alias)\n                                if col == src:\n                                    resolved.set_source_expressions(\n                                        [RawSQL('%d' % (pos + 1), ())]\n                                    )\n                                    found = True\n                                    break\n                            if found:\n                                break\n                        elif src in cq.select:\n                            resolved.set_source_expressions(\n                                [RawSQL('%d' % (cq.select.index(src) + 1), ())]\n                            )\n                            found = True\n                            break\n                    if not found:\n                        raise DatabaseError(\n                            'ORDER BY term does not match any column in the '\n                            'result set.'\n                        )"
+      },
+      {
+        "path": "django/db/models/sql/compiler.py",
+        "old_str": "        parts = ()\n        for compiler in compilers:\n            try:\n                # If the columns list is limited, then all combined queries\n                # must have the same columns list. Set the selects defined on\n                # the query on all combined queries, if not already set.\n                if not compiler.query.values_select and self.query.values_select:\n                    compiler.query = compiler.query.clone()\n                    compiler.query.set_values((\n                        *self.query.extra_select,\n                        *self.query.values_select,\n                        *self.query.annotation_select,\n                    ))",
+        "new_str": "        # Determine which extra ordering fields must be propagated to the\n        # inner queries so that positional ORDER BY references remain valid\n        # even after the outer select has been narrowed via values().\n        ordering_extra = []\n        for f in self.query.order_by:\n            if isinstance(f, str) and f != '?':\n                fname = f.lstrip('-')\n                if (\n                    fname not in self.query.values_select\n                    and fname not in self.query.annotation_select\n                    and fname not in self.query.extra_select\n                ):\n                    ordering_extra.append(fname)\n\n        parts = ()\n        for compiler in compilers:\n            try:\n                # If the columns list is limited, then all combined queries\n                # must have the same columns list. Set the selects defined on\n                # the query on all combined queries, if not already set.\n                if not compiler.query.values_select and self.query.values_select:\n                    compiler.query = compiler.query.clone()\n                    compiler.query.set_values((\n                        *self.query.extra_select,\n                        *self.query.values_select,\n                        *self.query.annotation_select,\n                        *ordering_extra,\n                    ))"
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 17578,
+    "prompt_tokens": 16287,
+    "total_tokens": 33865,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 16384,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 17578
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 2048,
+      "text_tokens": 16287
+    }
+  },
+  "requested_temperature": 1.0,
+  "requested_top_p": 0.95,
+  "extra_body": {
+    "enable_thinking": true,
+    "thinking_budget": 16384,
+    "preserve_thinking": true
+  },
+  "feedback_file": "evaluation/analysis/model_swap_10554_diagnosis_20261119/focused-feedback-round3-matrix.validation.json",
+  "public_test_files": [
+    "tests/queries/test_qs_combinators.py"
+  ]
+}

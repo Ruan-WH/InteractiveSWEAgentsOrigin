@@ -1,0 +1,14 @@
+{
+  "max-bash-comparison": {
+    "responses_checked": 26,
+    "foreign_assistant_tool_ids": [],
+    "first_request_has_no_hidden_target_test": true,
+    "first_request_has_no_gold_helper": true
+  },
+  "evidence-progress": {
+    "responses_checked": 69,
+    "foreign_assistant_tool_ids": [],
+    "first_request_has_no_hidden_target_test": true,
+    "first_request_has_no_gold_helper": true
+  }
+}

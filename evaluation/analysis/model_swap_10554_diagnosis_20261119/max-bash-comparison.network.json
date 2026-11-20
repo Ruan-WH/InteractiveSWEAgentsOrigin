@@ -1,0 +1,10 @@
+[
+  {
+    "id": "44039edf2408bc483572870ebc5e13632e9fdd04108854a88e52b19fb82162cb",
+    "internal": true,
+    "networks": [
+      "ambig-swe-diagnosis-max-comparison-20261119"
+    ],
+    "external_tcp_blocked": true
+  }
+]

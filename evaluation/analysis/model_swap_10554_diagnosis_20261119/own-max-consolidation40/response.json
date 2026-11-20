@@ -1,0 +1,32 @@
+{
+  "protocol": "own-public-trace-repair-consolidation-v1",
+  "model": "qwen3.8-max",
+  "response": {
+    "observation": "The clarification establishes the failing sequence: a union queryset ordered by a model field is first evaluated successfully; after evaluating a derived `qs.order_by().values_list('pk', flat=True)`, re-evaluating the original ordered union can generate `ORDER BY position N is not in select list` because the combined query's component queries can be shared and mutated/compiled with a different select list. The baseline already clones component queries inside `get_combinator_sql()` only when propagating `values_select`, but `Query.clone()` still shallow-copies `combined_queries`, so derived clones of a combined query continue to operate on the original component `Query` objects. The existing public test contract (`tests/queries/test_qs_combinators.py`) requires union/intersection/difference results, ordering, and values/values_list behavior to remain unchanged. Making `Query.clone()` copy the combined queries prevents derived combined querysets from mutating or reusing component query state from the original queryset while preserving SQL shape and ordering.",
+    "edits": [
+      {
+        "path": "django/db/models/sql/query.py",
+        "old_str": "        obj.used_aliases = self.used_aliases.copy()\n        obj._filtered_relations = self._filtered_relations.copy()\n        # Clear the cached_property\n        try:\n            del obj.base_table\n        except AttributeError:\n            pass\n        return obj",
+        "new_str": "        obj.used_aliases = self.used_aliases.copy()\n        obj._filtered_relations = self._filtered_relations.copy()\n        if self.combined_queries:\n            obj.combined_queries = tuple(q.clone() for q in self.combined_queries)\n        # Clear the cached_property\n        try:\n            del obj.base_table\n        except AttributeError:\n            pass\n        return obj"
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 16775,
+    "prompt_tokens": 41373,
+    "total_tokens": 58148,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 16384,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 16775
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "text_tokens": 41373
+    }
+  },
+  "manifest_sha256": "26e32fc7d4d66daf8c67ae0d84c8d7b8bc5159a36285cc339e5309ec3d6e9299"
+}

@@ -1,0 +1,21 @@
+{
+  "scope": "Local-only review of previously transmitted parent request; no new external call",
+  "source_request": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/max-bash-comparison/partial_followup/inference/princeton-nlp__SWE-bench_Verified-test/CodeActAgent/qwen3.8-max_maxiter_100_N_qwen38-diagnosis-max-bash-comparison/llm_completions/django__django-10554/openai__qwen3.8-max-1795070785.971871.json",
+  "responses_observed": 31,
+  "parent_model_config": "hidden_qwen38_max_sampled",
+  "proposed_model_config": "hidden_qwen38_max_sampled",
+  "same_existing_gateway_and_credentials": true,
+  "new_payload_is_rendered_subset_of_already_transmitted_parent_messages": true,
+  "host_config_api_key_or_base_url_occurrences": 0,
+  "host_user_home_path_occurrences": 0,
+  "command_absolute_paths": [
+    "/testbed",
+    "/testbed/tests",
+    "/tmp/repro.py",
+    "/tmp/sweep.py"
+  ],
+  "task_repository": "django/django",
+  "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+  "public_repository_source": "https://github.com/django/django",
+  "new_facts_from_private_host_repository": false
+}

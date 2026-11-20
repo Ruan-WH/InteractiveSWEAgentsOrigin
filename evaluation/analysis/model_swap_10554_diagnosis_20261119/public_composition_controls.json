@@ -1,0 +1,57 @@
+{
+  "protocol": "researcher-control-only-not-agent-input",
+  "baseline": {
+    "reported_sequence_passes": true,
+    "ordered_original_pks": [
+      11,
+      17,
+      10,
+      16
+    ],
+    "cleared_projection_pks": [
+      10,
+      11,
+      16,
+      17
+    ],
+    "ordered_projection_error": "DatabaseError: ORDER BY term does not match any column in the result set."
+  },
+  "focused_model": {
+    "reported_sequence_passes": true,
+    "ordered_original_pks": [
+      11,
+      17,
+      10,
+      16
+    ],
+    "cleared_projection_pks": [
+      10,
+      11,
+      16,
+      17
+    ],
+    "ordered_projection_error": "DatabaseError: ORDER BY term does not match any column in the result set."
+  },
+  "gold": {
+    "reported_sequence_passes": true,
+    "ordered_original_pks": [
+      11,
+      17,
+      10,
+      16
+    ],
+    "cleared_projection_pks": [
+      10,
+      11,
+      16,
+      17
+    ],
+    "ordered_projection_pks": [
+      11,
+      17,
+      10,
+      16
+    ],
+    "ordered_projection_preserves_result": true
+  }
+}

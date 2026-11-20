@@ -1,0 +1,11 @@
+{
+  "source_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+  "diagnostic_only": true,
+  "response_file": "evaluation/analysis/model_swap_10554_diagnosis_20261119/focused-feedback-round2.response.json",
+  "apply_exit": 0,
+  "apply_output": "",
+  "probe_exit": 0,
+  "probe_output": "{\"reported_sequence_passes\": true, \"ordered_original_pks\": [11, 17, 10, 16], \"cleared_projection_pks\": [10, 11, 16, 17], \"ordered_projection_pks\": [11, 17, 10, 16], \"ordered_projection_preserves_result\": true}\n",
+  "existing_tests_exit": 0,
+  "existing_tests_output": "Creating test database for alias 'default'...\n.............s..........s.\n----------------------------------------------------------------------\nRan 26 tests in 0.016s\n\nOK (skipped=2)\nDestroying test database for alias 'default'...\nTesting against Django installed in '/testbed/django'\nSystem check identified no issues (1 silenced).\n"
+}

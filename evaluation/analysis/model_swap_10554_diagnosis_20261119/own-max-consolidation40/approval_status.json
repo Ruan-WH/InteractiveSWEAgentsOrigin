@@ -1,0 +1,14 @@
+{
+  "status": "authorized_single_request_completed",
+  "api_request_made": true,
+  "rejections": 2,
+  "reason": "Automatic review requires explicit authorization for this exact historical payload transfer even after local subset/secret checks.",
+  "unaffected_parent_run": "max-bash-comparison",
+  "do_not_retry_or_route_indirectly_without_permission": true,
+  "user_answer": "允许这一次已核验记录的重发",
+  "authorized_actual_messages_sha256": "a2a24ce90fad1639fb4cf7adf19e8e051cc7ab1b90dd150e55dd2f054d8d3108",
+  "max_provider_retries": 0,
+  "api_response_saved": true,
+  "requests_sent": 1,
+  "additional_model_calls_authorized": false
+}

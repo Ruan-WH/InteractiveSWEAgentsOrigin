@@ -1,0 +1,3464 @@
+{
+  "protocol": "10554-model-swap-three-arm-offline-v1",
+  "model": {
+    "model": "openai/qwen3.8-flash",
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "max_input_tokens": 131072,
+    "max_output_tokens": 8192,
+    "num_retries": 3,
+    "extra_body": {
+      "enable_thinking": false
+    }
+  },
+  "source_unchanged_since_freeze": true,
+  "question_modules_equal_9208606": {
+    "evaluation/utils/simple_followup.py": true,
+    "evaluation/utils/simple_clarification.py": true,
+    "evaluation/utils/answer_check.py": true,
+    "evaluation/utils/mandatory_clarification.py": true
+  },
+  "arms": {
+    "ideal_no_followup": {
+      "response_condition": "ideal",
+      "clarification_mode": "initial-only",
+      "inference_exit": 0,
+      "solver_error": "RuntimeError: Agent reached maximum iteration in headless mode. Current iteration: 100, max iteration: 100",
+      "followups_used": 0,
+      "check_status": "not_run",
+      "stop_reason": "initial_only_control",
+      "checker_error": null,
+      "public_exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```\n\nNext, evaluate the derived queryset, then display the original qs again:\n\n```pycon\n>>> qs.order_by().values_list('pk', flat=True)\n<QuerySet [16, 11, 10, 17]>\n>>> qs\n[breaks]\n```\n\nThe exception above occurs on that second display of the original qs, after the derived-queryset operation. The first display of qs succeeds."
+        }
+      ],
+      "patch_chars": 4658,
+      "cleanup_error": null,
+      "finalization_error": null,
+      "all_public_qa_handed_off_exactly": true,
+      "metrics": {
+        "accumulated_cost": 0.0,
+        "costs": [
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058936.5361362
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058938.978297
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058941.0252004
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058942.86874
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058945.2354171
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058947.600045
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058950.3577306
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058952.2938058
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058954.4403524
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058957.1022127
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058958.944859
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058962.2203815
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058964.0935144
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058966.787641
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058968.998041
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058970.91492
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058972.974138
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058975.023052
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058977.3775573
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058979.6447902
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058981.687631
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058984.301748
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058986.291616
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058988.786315
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058990.7077277
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058993.0723763
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058995.707996
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058997.7041843
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795058999.9931772
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059002.569622
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059004.9244099
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059007.7767801
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059014.460002
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059016.0861762
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059018.442105
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059021.8237407
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059023.970631
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059027.1515641
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059029.2371995
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059033.80103
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059035.4353805
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059037.4885015
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059039.6527293
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059043.3252432
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059046.7435656
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059049.361272
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059052.2337065
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059055.4235742
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059057.658106
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059059.6359968
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059062.2699842
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059064.7269964
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059066.775404
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059069.3589756
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059071.554354
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059073.8676145
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059075.8894596
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059079.0640857
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059081.1114032
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059084.7103798
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059086.4616933
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059090.9621632
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059095.4314134
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059100.1157663
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059106.7115445
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059111.9349697
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059116.64492
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059121.6629236
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059124.26922
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059126.858864
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059132.0397468
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059135.180341
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059137.5354156
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059139.6843653
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059144.5236776
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059149.6165469
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059155.1436942
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059160.4723186
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059166.323944
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059171.508654
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059177.074848
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059182.8992574
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059190.800846
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059194.1481602
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059197.440816
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059200.1029792
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059211.4698293
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059217.304356
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059220.7873936
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059223.2188597
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059225.717144
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059228.4676905
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059235.5335293
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059237.9237545
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059241.370081
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059243.5203671
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059246.457825
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059255.7090802
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059265.3320582
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059267.7129772
+          }
+        ],
+        "response_latencies": [
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8164722919464111,
+            "response_id": "chatcmpl-90812ac6-86e1-92e4-b3dc-afa022a549f1"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.7885167598724365,
+            "response_id": "chatcmpl-57395ede-5a8d-9c0b-9118-5cf04cf85dfa"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.3443975448608398,
+            "response_id": "chatcmpl-523a1a83-6eee-9e41-a449-03cdcdcea05c"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.1886353492736816,
+            "response_id": "chatcmpl-7648aca9-79ad-9b7e-bc93-b01a1f388354"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.7112908363342285,
+            "response_id": "chatcmpl-9fd4d282-ce64-98ef-a789-9edc3018a78d"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.7073826789855957,
+            "response_id": "chatcmpl-fe786369-3571-9c98-997e-20b605654e77"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.104159355163574,
+            "response_id": "chatcmpl-5b78cefb-d113-92cd-b93a-c2a2392ac821"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.2807588577270508,
+            "response_id": "chatcmpl-ce09f6f5-2de9-9580-9e9e-fa4b9d6ce3f1"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.4952256679534912,
+            "response_id": "chatcmpl-027e0664-4c5f-9f6f-bd3b-441aa4d42531"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.0008246898651123,
+            "response_id": "chatcmpl-1fa0ced4-05f1-9cd4-8912-ba3fb9f18bb1"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.1872835159301758,
+            "response_id": "chatcmpl-1824a73d-d953-9a2a-a1f4-f3e32e9614d2"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.61442232131958,
+            "response_id": "chatcmpl-1980c58c-15d6-9fc7-81bb-ecc8df482abc"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.2358932495117188,
+            "response_id": "chatcmpl-4d70f285-dc56-9db6-84f4-598d5f09428f"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.034496545791626,
+            "response_id": "chatcmpl-db36284b-ea65-970f-8508-88cd3d718d58"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.5522668361663818,
+            "response_id": "chatcmpl-ef932883-ae88-9fc6-bc46-01374f2c3b18"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.2603964805603027,
+            "response_id": "chatcmpl-092c25cc-5ac5-953f-97ca-713a41ecc75c"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.4028470516204834,
+            "response_id": "chatcmpl-399f337a-6f20-9749-a783-2855404bba86"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.3970372676849365,
+            "response_id": "chatcmpl-61ff6aff-5e46-9dda-b272-cece54aa57ad"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6956653594970703,
+            "response_id": "chatcmpl-bd0c7c6b-c373-9458-99b8-6ce4e4ac6b73"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6039831638336182,
+            "response_id": "chatcmpl-12c5ef46-7285-94e8-9055-1b123636c71f"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.3873836994171143,
+            "response_id": "chatcmpl-6f6c5ab0-72c3-926b-86c4-07dbb9da4b0b"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.953075885772705,
+            "response_id": "chatcmpl-8f3467d6-e033-9f49-a609-bcb7c8870b99"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.3371694087982178,
+            "response_id": "chatcmpl-05c3eb7b-0fc6-9877-ad4e-66abfbe38749"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8393583297729492,
+            "response_id": "chatcmpl-d5778501-a9f9-9602-9343-e9b8679b1490"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.260382890701294,
+            "response_id": "chatcmpl-8916e242-c8d1-97ac-823a-b33732571490"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.704681634902954,
+            "response_id": "chatcmpl-bb4b5625-74bf-9caf-8d74-4a67d6573e9a"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9771616458892822,
+            "response_id": "chatcmpl-de4f92b2-0b7d-9222-b9f2-4a9d6d91e5de"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.3415260314941406,
+            "response_id": "chatcmpl-c838bee9-c3ec-9f97-ba9a-0745911736d1"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6288504600524902,
+            "response_id": "chatcmpl-9a656adf-aca5-9b1e-aaaf-35cd7146eca5"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.914799690246582,
+            "response_id": "chatcmpl-126c29fa-ac4f-946c-8de5-0ffee8d339de"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6913402080535889,
+            "response_id": "chatcmpl-a1ad895c-19e4-903f-82c3-81d46d1dea03"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.193362236022949,
+            "response_id": "chatcmpl-b1ef6155-a9cb-9088-bb3b-cca24391d621"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 6.0265491008758545,
+            "response_id": "chatcmpl-206393c0-3b6e-9215-a148-1ab62bcb509c"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.605241298675537,
+            "response_id": "chatcmpl-f107d079-0e39-9417-beb2-7f6f0064e30a"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6941123008728027,
+            "response_id": "chatcmpl-b523e41d-90f9-9505-aaae-223c1903e6b9"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.7138917446136475,
+            "response_id": "chatcmpl-ea367e50-8155-969a-b374-658ecd7ee0e0"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.4960219860076904,
+            "response_id": "chatcmpl-64489522-95f3-993d-8b5d-8c47e46c5282"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.5198988914489746,
+            "response_id": "chatcmpl-eeac3094-8b59-91aa-b1e8-3b49158a6bcb"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.42317533493042,
+            "response_id": "chatcmpl-38aa89a2-91fe-952f-86c5-58024479eee7"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.9032578468322754,
+            "response_id": "chatcmpl-37bfd354-c04d-9bbc-8d3f-05f1490e9540"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.5559947490692139,
+            "response_id": "chatcmpl-dbb4f4a6-77f9-95b2-b9bf-5f81eb8ab0a9"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.3970966339111328,
+            "response_id": "chatcmpl-7bc209b7-0386-9748-a174-199f6e1cd604"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.5027410984039307,
+            "response_id": "chatcmpl-c3229700-dd93-93fb-8316-0f828d05ab63"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.511394500732422,
+            "response_id": "chatcmpl-96e51897-ab9f-9268-a5a9-9f2bbe61964d"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.759700059890747,
+            "response_id": "chatcmpl-c2c394c7-43a3-9bc9-8e7a-84453970063c"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9579226970672607,
+            "response_id": "chatcmpl-2779c7c4-90c9-9109-9ca1-fedafbfe41a3"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.2083308696746826,
+            "response_id": "chatcmpl-13b16ba1-3ee3-95d1-8fde-05a71647ce4e"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.5243167877197266,
+            "response_id": "chatcmpl-659cd38e-bcff-983a-939b-b81fc7be3483"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.5709247589111328,
+            "response_id": "chatcmpl-f53c8ab4-3ef9-9e54-892d-00185a854d24"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.3119895458221436,
+            "response_id": "chatcmpl-7c0ffc11-ff5e-9482-a645-f4cd1d98517f"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9709994792938232,
+            "response_id": "chatcmpl-dac3f71f-64a1-9b2e-9a6c-601060bc392a"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.7929773330688477,
+            "response_id": "chatcmpl-74d720dd-2e64-9428-832c-e5b730b51241"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.3834731578826904,
+            "response_id": "chatcmpl-67db46b4-95ce-98ef-bada-b6d8014b98f8"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.918508529663086,
+            "response_id": "chatcmpl-1777400a-254c-98d3-aab7-f1b75e6197e9"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.524925947189331,
+            "response_id": "chatcmpl-21d58b3a-138e-9e54-af4d-3501a06f3a71"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.653102159500122,
+            "response_id": "chatcmpl-e44569c1-38ba-9d92-8ef0-6dc85df72c24"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.3557336330413818,
+            "response_id": "chatcmpl-fcd0a8c6-7d0b-9d09-a706-370e2d0ac7cd"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.512079954147339,
+            "response_id": "chatcmpl-94785240-8bca-9c10-ac00-24c270f75781"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.3752081394195557,
+            "response_id": "chatcmpl-2aef8c86-bb6c-9ac9-89fa-c475afdedbd6"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.9341626167297363,
+            "response_id": "chatcmpl-54e97b99-fc83-91c4-9fcc-de57acce23e9"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.667947769165039,
+            "response_id": "chatcmpl-8cc8b5c9-79cb-937f-94e7-c4ab30354945"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.84019136428833,
+            "response_id": "chatcmpl-9efc53d9-f90e-9f16-b618-71de2b519823"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.7965211868286133,
+            "response_id": "chatcmpl-4fd5a477-9635-999c-b1f6-65b2e943b731"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.018776178359985,
+            "response_id": "chatcmpl-04ea490d-d840-9165-a5bc-ab372a125507"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 5.927044630050659,
+            "response_id": "chatcmpl-a20d29f4-5e14-9acc-9513-43defe03dbdf"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.557719945907593,
+            "response_id": "chatcmpl-96573b00-b937-9930-89fa-ba9735493a1f"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.0412092208862305,
+            "response_id": "chatcmpl-2f2fed3b-1ec1-9246-8fa5-1a74a0d5dc61"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.3468804359436035,
+            "response_id": "chatcmpl-68aad4db-706b-9631-8187-20cb48281a6b"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9375112056732178,
+            "response_id": "chatcmpl-4d108dd6-64e8-958a-a286-8535121329b4"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.920712947845459,
+            "response_id": "chatcmpl-52cef58c-d630-9bf0-adbf-948096c79eb9"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 5.1539247035980225,
+            "response_id": "chatcmpl-76ea2b2d-f3d1-9c31-b8ac-046292c7fb50"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.4688048362731934,
+            "response_id": "chatcmpl-523bf46b-18d8-936c-bcdf-cc96c88ea7e6"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.691871166229248,
+            "response_id": "chatcmpl-ab357c83-067c-92da-a816-beaea2681872"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.483717679977417,
+            "response_id": "chatcmpl-7cf9e27b-942f-9a6b-b308-9fa333455eb9"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.173854351043701,
+            "response_id": "chatcmpl-c7090628-530f-9a85-be37-0057761e165c"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.409778118133545,
+            "response_id": "chatcmpl-121673f3-3261-9592-b3ab-ebea1cf73634"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.862500905990601,
+            "response_id": "chatcmpl-5d5f2ce2-049c-9713-bdbf-72ec57ee5234"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.665341854095459,
+            "response_id": "chatcmpl-2b9a8096-ae08-99b7-83bf-684527300550"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 5.1822099685668945,
+            "response_id": "chatcmpl-3a9a2fbe-d09c-94d7-bb09-815be2dde068"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.515209913253784,
+            "response_id": "chatcmpl-988b357f-3577-92db-a164-9611a2acd088"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.900342226028442,
+            "response_id": "chatcmpl-27f9439f-50ee-9b6d-98b1-d513af4462e4"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 5.153162240982056,
+            "response_id": "chatcmpl-c7a15603-023b-9fdf-adce-f36714a92622"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 7.233839511871338,
+            "response_id": "chatcmpl-e0c126d8-4269-9bc9-8ff6-b0382bc3ae96"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.6844482421875,
+            "response_id": "chatcmpl-c9a5728a-0392-9195-bb09-52a638cadb8e"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.626652240753174,
+            "response_id": "chatcmpl-99f1ac61-f314-9000-8c9b-226270b25ba8"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.986837387084961,
+            "response_id": "chatcmpl-1e915de7-8817-98b3-866f-67cfecf059f5"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 10.69465684890747,
+            "response_id": "chatcmpl-f57bc275-9d8f-9527-99e3-f653b7d9bdc5"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 5.164278030395508,
+            "response_id": "chatcmpl-5fa9ef89-c698-9c97-8527-22055e291a28"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.810507297515869,
+            "response_id": "chatcmpl-bddb767a-d2b0-9422-bee0-230365876011"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.760923147201538,
+            "response_id": "chatcmpl-a46e5d61-132f-9ae6-9f8e-d465d24eb311"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8264310359954834,
+            "response_id": "chatcmpl-c89dd4ac-cd28-9f30-be01-c10090e769c0"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.0031063556671143,
+            "response_id": "chatcmpl-09d79cbb-454c-9cff-9c4e-5b0d0cc7ed66"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 6.9776105880737305,
+            "response_id": "chatcmpl-a7378ac3-0a09-9d30-b540-c764289613c6"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.3257439136505127,
+            "response_id": "chatcmpl-3f46e928-ab9e-9077-8da9-d73347a23796"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.4002842903137207,
+            "response_id": "chatcmpl-d61800f5-6932-94f1-91d9-bfd1b49aa608"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.081367254257202,
+            "response_id": "chatcmpl-18d2eb03-6581-9387-a778-d3c299a9b79a"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.8918724060058594,
+            "response_id": "chatcmpl-3972a88f-2606-9a0b-aee2-ada5d5cdcdc2"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 9.207448244094849,
+            "response_id": "chatcmpl-453dc848-0486-98a6-82f6-81b226c4e0e9"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 9.56205415725708,
+            "response_id": "chatcmpl-3f869be9-0b27-93ad-9f2b-3acceaff0933"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.3215322494506836,
+            "response_id": "chatcmpl-1a98e86a-c0ca-9cf6-9f81-595f7ccbcd01"
+          }
+        ]
+      },
+      "reference_history": {
+        "protocol": "baseline-only-git-v1",
+        "repositories": [
+          {
+            "path": "/workspace/django__django__3",
+            "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+            "tree": "b3f2ad248aec2b040a5860e6ddc4c27db4329b5b",
+            "prior_reachable_commits": 48863,
+            "remaining_commits": [
+              "14d026cccb144c6877294ba4cd4e03ebf0842498"
+            ],
+            "remaining_objects": 8344,
+            "source_unchanged": true,
+            "remotes": [],
+            "git_diff_available": true
+          },
+          {
+            "path": "/testbed",
+            "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+            "tree": "b3f2ad248aec2b040a5860e6ddc4c27db4329b5b",
+            "prior_reachable_commits": 48863,
+            "remaining_commits": [
+              "14d026cccb144c6877294ba4cd4e03ebf0842498"
+            ],
+            "remaining_objects": 8344,
+            "source_unchanged": true,
+            "remotes": [],
+            "git_diff_available": true
+          }
+        ],
+        "runtime_instance": {
+          "path": "/swe_util/eval_data/instances/swe-bench-instance.json",
+          "remaining_keys": [
+            "base_commit",
+            "instance_id",
+            "repo",
+            "version"
+          ],
+          "removed_keys": []
+        },
+        "verified": true,
+        "pip_cache_absent": true
+      },
+      "solver_responses": 100,
+      "empty_tool_name_responses": 0,
+      "tool_calls": 100,
+      "returned_models": [
+        "qwen3.8-flash"
+      ],
+      "invalid_tool_arguments": 0,
+      "history_lookup_commands": [
+        "ls /workspace/django__django__3 && echo \"---\" && cd /workspace/django__django__3 && git log --oneline -5",
+        "cd /workspace/django__django__3 && git show --stat HEAD",
+        "cd /workspace/django__django__3 && git status --short | head -20; echo \"---\"; git log --all --oneline | head -10"
+      ],
+      "prompt_tokens": 3337091,
+      "completion_tokens": 13509,
+      "reference_fix_observation": null,
+      "network_source_commands": [],
+      "external_read_requests": [],
+      "patch_files": [
+        "django/db/models/sql/compiler.py",
+        "django/db/models/sql/query.py",
+        "tests/queries/test_repro_tmp.py"
+      ],
+      "official": {
+        "resolved": false,
+        "patch_successfully_applied": true,
+        "tests": {
+          "FAIL_TO_PASS": {
+            "passed": 0,
+            "failed": 2,
+            "failures": [
+              "test_union_with_values_list_and_order (queries.test_qs_combinators.QuerySetSetOperationTests)",
+              "test_union_with_values_list_on_annotated_and_unannotated (queries.test_qs_combinators.QuerySetSetOperationTests)"
+            ]
+          },
+          "PASS_TO_PASS": {
+            "passed": 23,
+            "failed": 0,
+            "failures": []
+          },
+          "FAIL_TO_FAIL": {
+            "passed": 0,
+            "failed": 0,
+            "failures": []
+          },
+          "PASS_TO_FAIL": {
+            "passed": 0,
+            "failed": 0,
+            "failures": []
+          }
+        },
+        "report_path": "evaluation/evaluation_outputs/model-swap-10554-offline-20261119/ideal_no_followup/official_eval/logs/run_evaluation/model-swap-10554-offline-20261119-ideal_no_followup/qwen3.8-flash-ideal_no_followup/django__django-10554/report.json"
+      },
+      "graded_patch_matches_raw_output": true,
+      "raw_test_log_review": {
+        "path": "evaluation/evaluation_outputs/model-swap-10554-offline-20261119/ideal_no_followup/official_eval/logs/run_evaluation/model-swap-10554-offline-20261119-ideal_no_followup/qwen3.8-flash-ideal_no_followup/django__django-10554/test_output.txt",
+        "existing_target_explicitly_ok": true,
+        "merged_status_lines": [
+          "test_union_with_values_list_and_order (queries.test_qs_combinators.QuerySetSetOperationTests) ... test_union_with_values_list_on_annotated_and_unannotated (queries.test_qs_combinators.QuerySetSetOperationTests) ... ok"
+        ],
+        "failure_evidence": [
+          "FAIL: test_union_with_values_list_and_order (queries.test_qs_combinators.QuerySetSetOperationTests) (qs=<QuerySet [-1, 5, 6, 7]>)",
+          "AssertionError: Lists differ: [-1, 5, 6, 7] != [-1, 6, 5, 7]",
+          "FAIL: test_union_with_values_list_and_order (queries.test_qs_combinators.QuerySetSetOperationTests) (qs=<QuerySet [-1, 5, 6, 7]>)",
+          "AssertionError: Lists differ: [-1, 5, 6, 7] != [7, 5, 6, -1]",
+          "FAIL: test_union_with_values_list_and_order (queries.test_qs_combinators.QuerySetSetOperationTests) (qs=<QuerySet [-1, 5, 6, 7]>)",
+          "AssertionError: Lists differ: [-1, 5, 6, 7] != [-1, 6, 5, 7]",
+          "FAIL: test_union_with_values_list_and_order (queries.test_qs_combinators.QuerySetSetOperationTests) (qs=<QuerySet [-1, 5, 6, 7]>)",
+          "AssertionError: Lists differ: [-1, 5, 6, 7] != [7, 5, 6, -1]",
+          "FAIL: test_union_with_values_list_and_order (queries.test_qs_combinators.QuerySetSetOperationTests) (qs=<QuerySet [-1, 5, 6, 7]>)",
+          "AssertionError: Lists differ: [-1, 5, 6, 7] != [-1, 5, 7, 6]",
+          "FAIL: test_union_with_values_list_and_order (queries.test_qs_combinators.QuerySetSetOperationTests) (qs=<QuerySet [-1, 5, 6, 7]>)",
+          "AssertionError: Lists differ: [-1, 5, 6, 7] != [-1, 5, 7, 6]"
+        ],
+        "interpretation": "Official target counts are preserved. A merged unittest status line causes the actually passing existing target to be omitted/misclassified; the new ordering target still fails, so resolved remains false."
+      }
+    },
+    "partial_followup": {
+      "response_condition": "partial",
+      "clarification_mode": "adaptive",
+      "inference_exit": 0,
+      "solver_error": "RuntimeError: Agent reached maximum iteration in headless mode. Current iteration: 100, max iteration: 100",
+      "followups_used": 1,
+      "check_status": "completed",
+      "stop_reason": "evidence_supplied",
+      "checker_error": null,
+      "public_exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        },
+        {
+          "question": "What exact operations were performed after the successful `qs` display—including the union/order_by calls and the subsequent query or evaluation—that triggered the `ProgrammingError: ORDER BY position 4 is not in select list`?",
+          "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+        }
+      ],
+      "patch_chars": 11292,
+      "cleanup_error": null,
+      "finalization_error": null,
+      "all_public_qa_handed_off_exactly": true,
+      "metrics": {
+        "accumulated_cost": 0.0,
+        "costs": [
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059309.4660976
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059311.6872954
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059314.0976815
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059316.4303136
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059318.3770335
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059320.2958786
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059321.6169136
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059323.2623594
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059326.582673
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059328.719494
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059331.0735486
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059333.6378636
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059335.8954787
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059337.5669498
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059340.099909
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059342.2170157
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059344.7851584
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059346.8016493
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059348.2032807
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059351.043808
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059353.0900881
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059355.753965
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059357.773045
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059360.2644997
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059362.512319
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059365.1650424
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059367.5234663
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059369.9993095
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059371.9327636
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059377.463025
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059378.6909268
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059381.2868638
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059384.5440104
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059386.1132352
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059388.41907
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059390.877391
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059392.618008
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059394.8339415
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059398.6742795
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059401.3361542
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059403.4722526
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059405.7612004
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059408.2851944
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059410.3843853
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059412.8033044
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059414.8743074
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059417.092536
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059419.8569062
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059422.2142155
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059426.4127042
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059428.9859924
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059432.62712
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059434.717003
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059438.2586627
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059449.246006
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059451.9144073
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059454.6611602
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059457.0361662
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059458.7273958
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059461.7385602
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059469.5814018
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059471.556935
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059474.8755102
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059477.1153026
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059479.1481066
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059481.6098096
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059484.8825135
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059488.1585944
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059490.7193341
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059493.1766055
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059495.328132
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059497.8061683
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059501.4724195
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059503.749471
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059507.2109249
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059510.3574648
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059515.8058891
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059517.4269724
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059520.4514296
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059522.9558322
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059528.8870964
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059531.5783339
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059534.3436034
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059536.6762738
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059539.7083054
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059542.5345545
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059549.7039602
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059551.6635427
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059554.7198715
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059560.4563377
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059561.8983984
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059566.428187
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059571.6184142
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059573.7687078
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059579.4398859
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059581.8566732
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059585.7147007
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059587.3875356
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059589.7438092
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059593.2874112
+          }
+        ],
+        "response_latencies": [
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9960172176361084,
+            "response_id": "chatcmpl-b7920368-a016-9fef-a6dc-ac49e17fd0a1"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.5437734127044678,
+            "response_id": "chatcmpl-4df2172e-1754-97f9-9723-5315aa66f3f2"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.7041730880737305,
+            "response_id": "chatcmpl-3f7f9087-552c-9069-8402-18d714ed524a"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6814053058624268,
+            "response_id": "chatcmpl-4444f386-961a-9115-b6e1-e9122499bd20"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8760132789611816,
+            "response_id": "chatcmpl-0884d361-dd00-98aa-9bbd-b3fc257427e0"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.260960340499878,
+            "response_id": "chatcmpl-e9cffe79-d3d7-92a8-84dc-f234e751964e"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.2927987575531006,
+            "response_id": "chatcmpl-808fad8c-cef3-919a-b541-062ce411527e"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6148943901062012,
+            "response_id": "chatcmpl-0f982aec-eac7-9edc-a9bd-b0a61c7ef5ba"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.667895555496216,
+            "response_id": "chatcmpl-eaecf53a-250f-9ed9-90cf-12dedabf875b"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.4806885719299316,
+            "response_id": "chatcmpl-071c85dd-09b5-93f5-9b72-198bb941b11b"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.7086706161499023,
+            "response_id": "chatcmpl-a70a171f-38b7-9b3d-98fd-1e8a1f450bee"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9035758972167969,
+            "response_id": "chatcmpl-fb05081d-2020-912c-b9da-dd7a854f38e8"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.598128318786621,
+            "response_id": "chatcmpl-af9c7264-981a-911b-a922-546c1d7ab391"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6387548446655273,
+            "response_id": "chatcmpl-c229223b-122a-99ce-980a-69d4a267ab59"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8797764778137207,
+            "response_id": "chatcmpl-98ce29ef-580b-9a40-aa47-ab5140bcc8f0"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.4653925895690918,
+            "response_id": "chatcmpl-07da1d04-c6f1-98d6-918a-c05f125b63c0"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9086694717407227,
+            "response_id": "chatcmpl-770d4c64-0956-914b-bc99-1e57b80495a8"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.3548252582550049,
+            "response_id": "chatcmpl-a2264bfc-9295-9d91-87b8-c23e04595c2f"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.3714780807495117,
+            "response_id": "chatcmpl-1708bff1-f434-9bce-8008-2adce0c684a5"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.1994123458862305,
+            "response_id": "chatcmpl-3fc1b50c-ec12-9e72-b85a-3c180c11c926"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.3827826976776123,
+            "response_id": "chatcmpl-e7598927-1d25-9137-a92c-3a1e8c3f0aa4"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.0058434009552,
+            "response_id": "chatcmpl-85582a47-9c57-9f2e-9667-87f5d751df68"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.3683037757873535,
+            "response_id": "chatcmpl-fb1f6ee5-da57-938f-b57f-c1b9da1feec7"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8283288478851318,
+            "response_id": "chatcmpl-5fef26f0-6543-930f-8d69-c315a08e6792"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.5932390689849854,
+            "response_id": "chatcmpl-fab03fab-46b7-976b-a7dc-739e888ea1b0"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9923944473266602,
+            "response_id": "chatcmpl-3a7863cd-8172-9ef3-8517-5122f9e6d004"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.7224385738372803,
+            "response_id": "chatcmpl-582b7ca3-0707-91ca-8bb3-b5080cac50fa"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.83786940574646,
+            "response_id": "chatcmpl-c2777725-4dda-9c5a-b303-5f7676514e0e"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.265690565109253,
+            "response_id": "chatcmpl-e4801aee-0af1-991a-837d-c7123c60f2d0"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.87029767036438,
+            "response_id": "chatcmpl-cf740548-8fe1-932c-af7f-495406ab4023"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.1954796314239502,
+            "response_id": "chatcmpl-e159acd5-a09b-956e-9cea-c3f4f2c0eaba"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9341351985931396,
+            "response_id": "chatcmpl-3e327ed1-3e2b-94f4-8e4e-6cf302d719a3"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.2157108783721924,
+            "response_id": "chatcmpl-84205181-c6e2-99c9-a1e8-773c3e906cb7"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.5312316417694092,
+            "response_id": "chatcmpl-02f09efb-cf2a-9dab-9702-fcb1101e1c83"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6453347206115723,
+            "response_id": "chatcmpl-1cdc8409-9f02-926d-8e3f-c321bbf10297"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8011934757232666,
+            "response_id": "chatcmpl-16d81589-0528-9c93-bd9f-dd70b7eb1719"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.7028980255126953,
+            "response_id": "chatcmpl-a6977b43-f990-9568-aeb8-bcdfdf78bffd"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.548391342163086,
+            "response_id": "chatcmpl-af315589-b7e1-9d7b-8415-f48773489c7e"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.810792922973633,
+            "response_id": "chatcmpl-a9a06ce2-567a-998c-98fc-6d1decc6730a"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9997191429138184,
+            "response_id": "chatcmpl-1ede1ec2-c89b-914a-b463-bd018ee07d71"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.0998144149780273,
+            "response_id": "chatcmpl-306c1e4f-0567-915e-b738-dabbc59b3c92"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6274476051330566,
+            "response_id": "chatcmpl-ed6828d7-9c2d-9920-a7b8-ed7a083bf3cc"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8659775257110596,
+            "response_id": "chatcmpl-11a9ed94-e758-9a12-8cc3-2ac1ebbe7aaf"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.440995454788208,
+            "response_id": "chatcmpl-6577879e-cbce-9ee6-ae84-c5f88d743794"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.7580747604370117,
+            "response_id": "chatcmpl-91ed436b-0434-96e0-980e-9cad31a40953"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.4140090942382812,
+            "response_id": "chatcmpl-c2147b3f-c12c-9659-8bc4-21fc8edbcc3c"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.5545463562011719,
+            "response_id": "chatcmpl-64f64b85-10e0-9da3-835c-8fb7277ad1b1"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.083163261413574,
+            "response_id": "chatcmpl-8c3396bf-763b-952a-9c4e-180245b59807"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6968762874603271,
+            "response_id": "chatcmpl-dd3ed666-a447-95a9-bc89-7ff05293c84c"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.332273006439209,
+            "response_id": "chatcmpl-aa78eb0d-04c1-982a-9988-68f569d84c20"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9083538055419922,
+            "response_id": "chatcmpl-da746508-f913-9c84-af33-3dc9d57b51e2"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.9712812900543213,
+            "response_id": "chatcmpl-2e13f644-8e42-9f01-8795-b5e7f06f60fc"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.4277229309082031,
+            "response_id": "chatcmpl-558686ff-e1be-9d44-b239-c02a1161e079"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6706256866455078,
+            "response_id": "chatcmpl-1ba4adde-fbd4-9379-a7a9-293a91d8f123"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.2497949600219727,
+            "response_id": "chatcmpl-701b088e-d6c3-96ec-a5e1-6e480794bda3"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.006634473800659,
+            "response_id": "chatcmpl-74855a92-a405-9ce7-97c5-5d5489472dfe"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.0787155628204346,
+            "response_id": "chatcmpl-a5c98112-d7ee-96ed-826b-fcb87ef62723"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.7071459293365479,
+            "response_id": "chatcmpl-e1441a10-9eed-9744-9bd4-8ffad62259c4"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.652642011642456,
+            "response_id": "chatcmpl-a546e8c1-d9a2-9467-b567-76a070b8a281"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.3471264839172363,
+            "response_id": "chatcmpl-3d6d53d4-9266-9a05-9a1d-d1d3111c5a6c"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 7.17761492729187,
+            "response_id": "chatcmpl-665b207f-8cd5-9028-8cd7-97d7384170e9"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9335517883300781,
+            "response_id": "chatcmpl-e3ff0e2a-5b29-99d4-bc93-bc9394ac102d"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.655228614807129,
+            "response_id": "chatcmpl-7d5d314f-dd41-9d2a-ad01-922dd02eddbe"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.158573865890503,
+            "response_id": "chatcmpl-6df6dfae-2ebc-9855-80ea-d37eff7a78db"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.0008387565612793,
+            "response_id": "chatcmpl-f1b50471-d252-9bf2-9e21-7088e757ed83"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8036386966705322,
+            "response_id": "chatcmpl-66689573-e17b-9dbd-aca6-4c96f4d3c74c"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.1081762313842773,
+            "response_id": "chatcmpl-6feb501f-8794-9b3f-a016-16dd87d75a7d"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.61077618598938,
+            "response_id": "chatcmpl-3d2ba2b4-aa9d-9787-9e02-f2741689e87f"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9051439762115479,
+            "response_id": "chatcmpl-1543a598-ef0f-9010-b149-30a61d255cef"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.7954905033111572,
+            "response_id": "chatcmpl-50e8abf5-d25b-9452-afe9-1788483c3f84"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.4958195686340332,
+            "response_id": "chatcmpl-eda5a3c9-b80b-9214-9a79-f7375aa40efc"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.812683343887329,
+            "response_id": "chatcmpl-345f2eac-3cc1-9827-a4c7-09820aff9bc6"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.0101206302642822,
+            "response_id": "chatcmpl-ee10d2e8-763c-95da-8b81-c5f159ccecbe"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6109590530395508,
+            "response_id": "chatcmpl-c0cde0ae-1e55-930f-8348-5968fff6dd83"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.7971625328063965,
+            "response_id": "chatcmpl-1bba9faf-7784-95a4-af19-53402791b787"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.476780652999878,
+            "response_id": "chatcmpl-416d5903-7d2e-99e9-be1f-d424bd299ded"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 5.40854549407959,
+            "response_id": "chatcmpl-f6c588d3-e1f4-9c1d-a990-5746f1c39cc9"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.5861830711364746,
+            "response_id": "chatcmpl-5f184fdc-d960-9e53-a22f-0798973c1987"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.360111951828003,
+            "response_id": "chatcmpl-152e60f3-983c-98d2-a60e-436844708c84"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8292758464813232,
+            "response_id": "chatcmpl-91b3d72e-cc3c-955b-9761-f949ce943148"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 5.2653281688690186,
+            "response_id": "chatcmpl-0e458f51-7e1c-9e85-891a-3d57f6332916"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.634756565093994,
+            "response_id": "chatcmpl-9d14362c-554a-9e75-8210-286891842383"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.1009857654571533,
+            "response_id": "chatcmpl-24f3876e-f9b9-9833-9906-891aa7aeb798"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6612474918365479,
+            "response_id": "chatcmpl-50d51c8b-037b-9a67-9ca4-780407d076e6"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.3646132946014404,
+            "response_id": "chatcmpl-56d48772-389c-91c2-9b1b-b085cbc679ec"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6569230556488037,
+            "response_id": "chatcmpl-c6a8b883-a1e2-9d72-8ff9-f0a79fd85d1b"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 5.997632741928101,
+            "response_id": "chatcmpl-195932d1-63c1-9be1-ba25-cbf2034a5107"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.7958595752716064,
+            "response_id": "chatcmpl-8c3406a2-a3fe-9ed7-89a1-dc014d6165e6"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.389711380004883,
+            "response_id": "chatcmpl-62359ec1-6a0f-9f85-b3c2-2da750bc390a"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 5.064840078353882,
+            "response_id": "chatcmpl-2ba52b85-47a4-96e4-a483-ef70bb9493f5"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.3534584045410156,
+            "response_id": "chatcmpl-dd4a781d-466d-9635-ac34-120dec01eafd"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.8621082305908203,
+            "response_id": "chatcmpl-0b9f7ef2-be4b-9c49-8c81-07424e09f382"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 5.111495494842529,
+            "response_id": "chatcmpl-3afaa89c-68a4-91c8-8ba8-777543ec445c"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.1028077602386475,
+            "response_id": "chatcmpl-b5afa53e-a605-94fd-820d-1446b93c464c"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 5.009358882904053,
+            "response_id": "chatcmpl-cc09d7e4-5f35-92ea-82fc-0f8c90e3e835"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.3705577850341797,
+            "response_id": "chatcmpl-0c830681-ab19-9638-b9c9-0cb97a26cbfc"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.201144218444824,
+            "response_id": "chatcmpl-6928ca34-3b34-950d-8e9c-f5ba2cb2b503"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6312074661254883,
+            "response_id": "chatcmpl-dfa91d3d-0550-9de2-b961-4a3205cfb2f3"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6828551292419434,
+            "response_id": "chatcmpl-d0e3f9e8-c4e6-9481-9972-467a0bb59648"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.8743972778320312,
+            "response_id": "chatcmpl-6ce53ac0-e1ce-9dc1-ba70-b509904f0ef1"
+          }
+        ]
+      },
+      "reference_history": {
+        "protocol": "baseline-only-git-v1",
+        "repositories": [
+          {
+            "path": "/workspace/django__django__3",
+            "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+            "tree": "b3f2ad248aec2b040a5860e6ddc4c27db4329b5b",
+            "prior_reachable_commits": 48863,
+            "remaining_commits": [
+              "14d026cccb144c6877294ba4cd4e03ebf0842498"
+            ],
+            "remaining_objects": 8344,
+            "source_unchanged": true,
+            "remotes": [],
+            "git_diff_available": true
+          },
+          {
+            "path": "/testbed",
+            "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+            "tree": "b3f2ad248aec2b040a5860e6ddc4c27db4329b5b",
+            "prior_reachable_commits": 48863,
+            "remaining_commits": [
+              "14d026cccb144c6877294ba4cd4e03ebf0842498"
+            ],
+            "remaining_objects": 8344,
+            "source_unchanged": true,
+            "remotes": [],
+            "git_diff_available": true
+          }
+        ],
+        "runtime_instance": {
+          "path": "/swe_util/eval_data/instances/swe-bench-instance.json",
+          "remaining_keys": [
+            "base_commit",
+            "instance_id",
+            "repo",
+            "version"
+          ],
+          "removed_keys": []
+        },
+        "verified": true,
+        "pip_cache_absent": true
+      },
+      "solver_responses": 100,
+      "empty_tool_name_responses": 0,
+      "tool_calls": 100,
+      "returned_models": [
+        "qwen3.8-flash"
+      ],
+      "invalid_tool_arguments": 0,
+      "history_lookup_commands": [
+        "ls /workspace/django__django__3 && echo \"---\" && cd /workspace/django__django__3 && git log --oneline -5",
+        "cd /workspace/django__django__3 && git show --stat HEAD",
+        "cd /workspace/django__django__3 && grep -rn \"order_by\\|values_list\" tests/queries/tests.py | grep -i \"union\\|combine\\|30572\\|30664\" | head; echo \"---\"; git log --all --oneline 2>/dev/null | head"
+      ],
+      "prompt_tokens": 3258215,
+      "completion_tokens": 10700,
+      "reference_fix_observation": null,
+      "network_source_commands": [
+        "pip download django==3.0 --no-deps -d /tmp/dl 2>&1 | tail -5; echo \"===\"; pip show django 2>/dev/null | head -3; ls /opt/miniconda3/envs/testbed/lib/python*/site-packages/ | grep -i django"
+      ],
+      "external_read_requests": [
+        {
+          "url": "https://github.com/django/django/commit/9a5b1f0e2c8e4d3f5a6b7c8d9e0f1a2b3c4d5e6f",
+          "completion_path": "evaluation/evaluation_outputs/model-swap-10554-offline-20261119/partial_followup/inference/princeton-nlp__SWE-bench_Verified-test/CodeActAgent/qwen3.8-flash_maxiter_100_N_qwen38-three-arm-offline-v1/llm_completions/django__django-10554/openai__qwen3.8-flash-1795059422.2142606.json",
+          "network_error_observed": true
+        },
+        {
+          "url": "https://raw.githubusercontent.com/django/django/3.0/django/db/models/query.py",
+          "completion_path": "evaluation/evaluation_outputs/model-swap-10554-offline-20261119/partial_followup/inference/princeton-nlp__SWE-bench_Verified-test/CodeActAgent/qwen3.8-flash_maxiter_100_N_qwen38-three-arm-offline-v1/llm_completions/django__django-10554/openai__qwen3.8-flash-1795059434.7170327.json",
+          "network_error_observed": true
+        }
+      ],
+      "patch_files": [
+        "repro.py",
+        "repro2.py",
+        "repro3.py",
+        "repro4.py",
+        "repro5.py",
+        "repro6.py",
+        "repro7.py",
+        "repro8.py"
+      ],
+      "official": {
+        "resolved": false,
+        "patch_successfully_applied": true,
+        "tests": {
+          "FAIL_TO_PASS": {
+            "passed": 0,
+            "failed": 2,
+            "failures": [
+              "test_union_with_values_list_and_order (queries.test_qs_combinators.QuerySetSetOperationTests)",
+              "test_union_with_values_list_on_annotated_and_unannotated (queries.test_qs_combinators.QuerySetSetOperationTests)"
+            ]
+          },
+          "PASS_TO_PASS": {
+            "passed": 23,
+            "failed": 0,
+            "failures": []
+          },
+          "FAIL_TO_FAIL": {
+            "passed": 0,
+            "failed": 0,
+            "failures": []
+          },
+          "PASS_TO_FAIL": {
+            "passed": 0,
+            "failed": 0,
+            "failures": []
+          }
+        },
+        "report_path": "evaluation/evaluation_outputs/model-swap-10554-offline-20261119/partial_followup/official_eval/logs/run_evaluation/model-swap-10554-offline-20261119-partial_followup/qwen3.8-flash-partial_followup/django__django-10554/report.json"
+      },
+      "graded_patch_matches_raw_output": true,
+      "raw_test_log_review": {
+        "path": "evaluation/evaluation_outputs/model-swap-10554-offline-20261119/partial_followup/official_eval/logs/run_evaluation/model-swap-10554-offline-20261119-partial_followup/qwen3.8-flash-partial_followup/django__django-10554/test_output.txt",
+        "existing_target_explicitly_ok": true,
+        "merged_status_lines": [
+          "test_union_with_values_list_and_order (queries.test_qs_combinators.QuerySetSetOperationTests) ... test_union_with_values_list_on_annotated_and_unannotated (queries.test_qs_combinators.QuerySetSetOperationTests) ... ok"
+        ],
+        "failure_evidence": [
+          "django.db.utils.DatabaseError: ORDER BY term does not match any column in the result set."
+        ],
+        "interpretation": "Official target counts are preserved. A merged unittest status line causes the actually passing existing target to be omitted/misclassified; the new ordering target still fails, so resolved remains false."
+      }
+    },
+    "partial_no_followup": {
+      "response_condition": "partial",
+      "clarification_mode": "initial-only",
+      "inference_exit": 0,
+      "solver_error": "RuntimeError: Agent reached maximum iteration in headless mode. Current iteration: 100, max iteration: 100",
+      "followups_used": 0,
+      "check_status": "not_run",
+      "stop_reason": "initial_only_control",
+      "checker_error": null,
+      "public_exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        }
+      ],
+      "patch_chars": 3744,
+      "cleanup_error": null,
+      "finalization_error": null,
+      "all_public_qa_handed_off_exactly": true,
+      "metrics": {
+        "accumulated_cost": 0.0,
+        "costs": [
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059622.8242025
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059627.837462
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059630.1350996
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059632.2201905
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059635.4144418
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059638.281572
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059640.7436361
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059643.5037808
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059645.9610956
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059647.9074275
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059650.0950696
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059652.61831
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059655.5869248
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059658.1477036
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059661.116879
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059664.9063833
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059667.567578
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059674.1860044
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059675.7595775
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059678.5248966
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059681.1953063
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059683.8529298
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059687.9295142
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059691.7510278
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059697.2548022
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059701.7628956
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059704.188356
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059707.7096574
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059712.5226216
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059714.687976
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059717.1966093
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059719.89605
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059722.9683466
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059725.4903467
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059727.997835
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059731.4676702
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059735.4009805
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059745.9073884
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059748.7711673
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059756.2385952
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059761.4943764
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059763.7241266
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059770.437922
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059773.2920313
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059775.9245949
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059778.8798902
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059786.6612751
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059793.7054174
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059796.2893784
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059799.7701535
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059803.0679579
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059809.4974768
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059812.672656
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059815.23377
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059823.0208244
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059826.087154
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059830.7964559
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059834.7042212
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059837.2486465
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059840.5261283
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059842.676312
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059846.8328326
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059852.5472646
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059855.8867044
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059863.0769749
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059869.2035966
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059876.2635133
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059883.4254155
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059889.9866772
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059893.182781
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059898.00936
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059901.2640834
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059903.922521
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059907.2647054
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059911.3884628
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059914.6637712
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059917.7374947
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059920.5012858
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059923.7940104
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059927.2054276
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059930.291342
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059933.6100006
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059936.5716128
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059940.2653983
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059943.9986541
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059948.2520306
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059953.0799532
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059957.9810605
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059961.5964162
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059965.6598418
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059968.7335222
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059973.648424
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059976.8203542
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059980.715794
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795059995.7681522
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795060000.5953696
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795060010.2062814
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795060015.137157
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795060023.2262173
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "cost": 0.0,
+            "timestamp": 1795060027.1025705
+          }
+        ],
+        "response_latencies": [
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8616807460784912,
+            "response_id": "chatcmpl-3684c2c9-4907-947f-ad33-bb2e8ec678aa"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.361272573471069,
+            "response_id": "chatcmpl-fe91d851-80fd-9d7a-ad5f-b856fb57f85f"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.6410255432128906,
+            "response_id": "chatcmpl-be475b35-a584-964f-9afa-f18446378a96"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.4327692985534668,
+            "response_id": "chatcmpl-6b43eafe-9ca3-96ce-8d0e-0f54a274214b"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.5394933223724365,
+            "response_id": "chatcmpl-aeb08eec-ff0d-9450-8dce-a0e081548ce7"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.212230920791626,
+            "response_id": "chatcmpl-991dc606-eda3-9edd-a35b-0e034dd9c355"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8034040927886963,
+            "response_id": "chatcmpl-792552b0-8311-9855-a0ec-b8f543280aac"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.103426456451416,
+            "response_id": "chatcmpl-f3d86675-fb70-93fe-ad1b-84f17b80c391"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8007359504699707,
+            "response_id": "chatcmpl-60893eb3-2868-93f9-bcfb-68170105a1e6"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.2969160079956055,
+            "response_id": "chatcmpl-f97ae2fb-3438-9280-8b26-6ed71ccbc949"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.530609369277954,
+            "response_id": "chatcmpl-8e98eb93-2b4d-96ee-871b-49f575cbf556"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8654899597167969,
+            "response_id": "chatcmpl-8613440a-4caf-9511-bcd2-dd1e7e48b9d3"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.3026304244995117,
+            "response_id": "chatcmpl-6c25986b-b1fa-99d8-86b2-f4f12a39deec"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9039337635040283,
+            "response_id": "chatcmpl-a4fa3d0f-db97-9ecf-a955-4cbbd58aabac"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.3124985694885254,
+            "response_id": "chatcmpl-894f03f8-5005-95d0-bcdf-a84dcc850c2c"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.1138041019439697,
+            "response_id": "chatcmpl-9cffed7a-1dca-9606-a99c-cac7bd2ebc96"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9950425624847412,
+            "response_id": "chatcmpl-3d96c85e-ccd3-9d0b-92b8-4245f729bec3"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 5.963638544082642,
+            "response_id": "chatcmpl-2fee4972-ad54-9d8f-8494-a8b01c5836da"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.4971380233764648,
+            "response_id": "chatcmpl-73fa3e58-f3da-9c4a-8e3b-3312ced22eeb"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.1120755672454834,
+            "response_id": "chatcmpl-0dded9f2-e8d8-9a81-9e79-0528008ed1cc"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.012603759765625,
+            "response_id": "chatcmpl-0c127c02-a190-9876-a409-eee245e8b40e"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.000945806503296,
+            "response_id": "chatcmpl-af8f34e5-7fba-9228-930c-80d6f199e4f2"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.4181771278381348,
+            "response_id": "chatcmpl-86f13c0c-dafb-94f6-a49f-d505e7c7bf4f"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.7775368690490723,
+            "response_id": "chatcmpl-f222a1bc-17c5-9987-8ff2-dd83cb645a6d"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 5.467606067657471,
+            "response_id": "chatcmpl-3cdb2967-99f1-9c87-b811-66ce0e37e3d3"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.456383466720581,
+            "response_id": "chatcmpl-aea6bde7-fcf1-9752-b48e-4a36684d66b9"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.343952178955078,
+            "response_id": "chatcmpl-28ea4897-e65f-9913-9b8d-7c4ce75595e2"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.4744699001312256,
+            "response_id": "chatcmpl-b300f6dd-89db-92fd-9e83-92ec443063af"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.740755081176758,
+            "response_id": "chatcmpl-83695ca3-dae3-9b7f-8358-cb8a93399c3c"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.1164510250091553,
+            "response_id": "chatcmpl-4f05592d-9ada-982b-9136-28ceb6d663ec"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.845935344696045,
+            "response_id": "chatcmpl-ffa13431-186e-9471-9712-94aee5c79139"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.0373454093933105,
+            "response_id": "chatcmpl-12920830-2537-98f3-99fd-5b1d072d069b"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.4093143939971924,
+            "response_id": "chatcmpl-112849fa-3b6f-98aa-8d2f-4581429c809f"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8607456684112549,
+            "response_id": "chatcmpl-417b67d2-98af-9b5f-97de-e34d80a1fb99"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8536078929901123,
+            "response_id": "chatcmpl-4ce0f0dc-b527-948f-8715-f69e48c6c3f1"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.8081138134002686,
+            "response_id": "chatcmpl-41500e49-1710-9ce6-a79c-43cbe6f9d29a"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.2710976600646973,
+            "response_id": "chatcmpl-7ab8749a-95f6-9feb-9ec4-f8c3f5cdbe78"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 9.862125635147095,
+            "response_id": "chatcmpl-73843ad5-fa82-9469-a305-314af118e59f"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.1966164112091064,
+            "response_id": "chatcmpl-0c90ce63-dcbc-97e1-aafc-f78395084689"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 6.810540437698364,
+            "response_id": "chatcmpl-038f29d0-da4d-9a9b-96b0-055c0dec4083"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.591071128845215,
+            "response_id": "chatcmpl-230f8304-2877-93c9-ab96-55de38212ef1"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.5705029964447021,
+            "response_id": "chatcmpl-1e14ea57-765e-95e6-84b5-b87440da5de3"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 6.0427467823028564,
+            "response_id": "chatcmpl-a88ff40a-6ac6-9a3e-8fc6-0bdc90aa98f7"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.181793689727783,
+            "response_id": "chatcmpl-6c66445e-5c3e-9210-9835-5530ca52fc44"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.970949649810791,
+            "response_id": "chatcmpl-e7326adb-e301-98b9-8487-91a4e0c482cf"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.2913296222686768,
+            "response_id": "chatcmpl-a0e71e5f-45f9-9917-aaa9-dcad74fd72d1"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 7.115560054779053,
+            "response_id": "chatcmpl-62558167-baf2-9a1c-aae3-bd79f8bf56a1"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 6.379281759262085,
+            "response_id": "chatcmpl-a407664b-cd17-9d19-942b-dca3a2fd98c9"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9127271175384521,
+            "response_id": "chatcmpl-10679d29-b754-9d6f-8ee1-99b1010b03ee"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.8228561878204346,
+            "response_id": "chatcmpl-94f54a64-cc91-98c9-8862-0dcb4a23bca2"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.6345722675323486,
+            "response_id": "chatcmpl-0756958f-866e-9c7b-9718-c4b08745ca64"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 5.761991739273071,
+            "response_id": "chatcmpl-0c202563-190b-92ef-8ad3-80fdcb53bbb1"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.5081379413604736,
+            "response_id": "chatcmpl-05dd98b1-8d3d-9481-843a-75f3b47996e4"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8973710536956787,
+            "response_id": "chatcmpl-f3938e2a-8b68-9394-af95-d4a00e826a43"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 7.121986150741577,
+            "response_id": "chatcmpl-c162b8e8-a3cf-9890-840a-db8cf613c33e"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.3995184898376465,
+            "response_id": "chatcmpl-4b3546b3-e0c0-9dca-af13-81f271ed915c"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.046272277832031,
+            "response_id": "chatcmpl-c9e2312d-0cb6-9c7f-87b2-9de7d02e496d"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.253437042236328,
+            "response_id": "chatcmpl-94396c95-bfa9-92bb-aaba-38c0d1161283"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.8875467777252197,
+            "response_id": "chatcmpl-515bc496-422e-93f6-824f-a524c7cedabc"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.613990545272827,
+            "response_id": "chatcmpl-8de9608c-4df8-9feb-945f-5ea3b4163d26"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.4826610088348389,
+            "response_id": "chatcmpl-65de844b-b950-9368-aaf2-24e150743d14"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.4919605255126953,
+            "response_id": "chatcmpl-0c2c24f2-b4c7-9839-bc15-eae68ae5201f"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 5.053729295730591,
+            "response_id": "chatcmpl-98c2f94d-0521-92b3-b94d-ee5fa9940d20"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.6754677295684814,
+            "response_id": "chatcmpl-82eed9b4-3abb-9fe3-b854-ddca34a1ad74"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.987264394760132,
+            "response_id": "chatcmpl-d28e998c-84b3-97f7-b5f0-082b54a8082b"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 5.463226318359375,
+            "response_id": "chatcmpl-75069962-5c6d-95ec-8518-7f4288a6f4fb"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 6.962304353713989,
+            "response_id": "chatcmpl-4ca69de9-02a8-9d38-90da-359cbcb33860"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 6.495288610458374,
+            "response_id": "chatcmpl-546503fb-623c-99b9-9e5a-81956a452259"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 6.4306864738464355,
+            "response_id": "chatcmpl-8c35788b-fe51-9a5b-9bbf-f95c39e690e3"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.15280818939209,
+            "response_id": "chatcmpl-beed4126-a92b-906b-ace8-d3bcd9025091"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.172342777252197,
+            "response_id": "chatcmpl-50e2d26b-07a1-9409-a1d1-16629a6d0a20"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.5886478424072266,
+            "response_id": "chatcmpl-1cc7f3b6-e473-9ab3-824d-5f4f5ad32933"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.9923441410064697,
+            "response_id": "chatcmpl-2f27e770-d97a-9d4e-92b8-aa5c03a48210"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.6763525009155273,
+            "response_id": "chatcmpl-04d0cc95-f208-97e9-b1d2-398a25225ba5"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.4539711475372314,
+            "response_id": "chatcmpl-a8518373-3077-9d16-99ac-f39fd6a8d2bd"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.6161677837371826,
+            "response_id": "chatcmpl-31fcf202-db77-96cf-9e20-64773d9cb79d"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.409440279006958,
+            "response_id": "chatcmpl-a716ffab-34c2-931f-9541-8f4745c3b5a1"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.5938661098480225,
+            "response_id": "chatcmpl-e8efeb41-9e08-9cba-8845-46380f27054a"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.1218960285186768,
+            "response_id": "chatcmpl-e2be15b7-f30c-9c4e-9521-a23a2ecc1cab"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.743313789367676,
+            "response_id": "chatcmpl-018fe427-1fe9-9190-8f05-8d78a58aa838"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.912973165512085,
+            "response_id": "chatcmpl-d3411656-a14d-95dc-b3c4-300241912931"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.1492362022399902,
+            "response_id": "chatcmpl-e0edac14-3115-915e-a1ad-3edbf6834739"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.7890048027038574,
+            "response_id": "chatcmpl-7428bbd3-2b81-9248-b82f-551989e8c16e"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.517254590988159,
+            "response_id": "chatcmpl-16ed636b-3343-9ac8-8900-c9ffbdcb7b56"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.5596697330474854,
+            "response_id": "chatcmpl-b59eaeb7-a1f9-9c6e-a074-5fb1205c5a87"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.580259323120117,
+            "response_id": "chatcmpl-32cb9677-c370-948e-869e-f340a4d89a85"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.1463663578033447,
+            "response_id": "chatcmpl-c7daadbd-026c-9ac8-bb6b-2ba138a36e73"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.214420795440674,
+            "response_id": "chatcmpl-02451403-be12-9111-b175-630f055489e2"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.945274591445923,
+            "response_id": "chatcmpl-4312dc7b-b60e-9eab-9c1e-612801a15121"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.892045259475708,
+            "response_id": "chatcmpl-c550475c-0b51-9c54-b828-7e2d0bf8edbd"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 1.912898063659668,
+            "response_id": "chatcmpl-112d8320-dc4c-9ad7-b82a-8f16faa6b712"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.248338937759399,
+            "response_id": "chatcmpl-9276bf99-81a0-914d-bd5c-adb217c97829"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 2.0020320415496826,
+            "response_id": "chatcmpl-c851bd3e-bf48-92c5-b086-fe4410a48e0e"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.23757266998291,
+            "response_id": "chatcmpl-9e81272d-4410-9c5c-b51b-3e710d3ae793"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 14.381415367126465,
+            "response_id": "chatcmpl-0c52a742-fdcc-94ff-96de-52cfe7e8bb27"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.153005361557007,
+            "response_id": "chatcmpl-bc77320a-dc38-9c2a-9e53-60bb0cb211d4"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 8.93720006942749,
+            "response_id": "chatcmpl-646cbc10-7cbf-9eb6-afba-7a3352e91256"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 4.257087230682373,
+            "response_id": "chatcmpl-2223ad02-b43d-9c95-834d-2b8ae2e38db1"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 7.411044597625732,
+            "response_id": "chatcmpl-25631966-1c97-9988-ae4e-c03d7e00e947"
+          },
+          {
+            "model": "openai/qwen3.8-flash",
+            "latency": 3.2039527893066406,
+            "response_id": "chatcmpl-db4ec7d1-d11c-965f-abfd-88d28f3bde94"
+          }
+        ]
+      },
+      "reference_history": {
+        "protocol": "baseline-only-git-v1",
+        "repositories": [
+          {
+            "path": "/workspace/django__django__3",
+            "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+            "tree": "b3f2ad248aec2b040a5860e6ddc4c27db4329b5b",
+            "prior_reachable_commits": 48863,
+            "remaining_commits": [
+              "14d026cccb144c6877294ba4cd4e03ebf0842498"
+            ],
+            "remaining_objects": 8344,
+            "source_unchanged": true,
+            "remotes": [],
+            "git_diff_available": true
+          },
+          {
+            "path": "/testbed",
+            "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+            "tree": "b3f2ad248aec2b040a5860e6ddc4c27db4329b5b",
+            "prior_reachable_commits": 48863,
+            "remaining_commits": [
+              "14d026cccb144c6877294ba4cd4e03ebf0842498"
+            ],
+            "remaining_objects": 8344,
+            "source_unchanged": true,
+            "remotes": [],
+            "git_diff_available": true
+          }
+        ],
+        "runtime_instance": {
+          "path": "/swe_util/eval_data/instances/swe-bench-instance.json",
+          "remaining_keys": [
+            "base_commit",
+            "instance_id",
+            "repo",
+            "version"
+          ],
+          "removed_keys": []
+        },
+        "verified": true,
+        "pip_cache_absent": true
+      },
+      "solver_responses": 100,
+      "empty_tool_name_responses": 0,
+      "tool_calls": 100,
+      "returned_models": [
+        "qwen3.8-flash"
+      ],
+      "invalid_tool_arguments": 0,
+      "history_lookup_commands": [
+        "ls /workspace/django__django__3; cd /workspace/django__django__3 && git log --oneline -5",
+        "cd /workspace/django__django__3 && git show --stat HEAD | head -30",
+        "cd /workspace/django__django__3 && grep -rn \"ORDER BY position\" tests docs 2>/dev/null | head; git log --all --oneline | head",
+        "cd /testbed && git log --oneline -2 2>/dev/null; diff <(cd /testbed && git show HEAD:django/db/models/sql/compiler.py 2>/dev/null) /workspace/django__django__3/django/db/models/sql/compiler.py | head -5; cp /workspace/django__django__3/django/db/models/sql/compiler.py /tmp/edited_compiler.py; cd /testbed && git status 2>/dev/null | head -5"
+      ],
+      "prompt_tokens": 3407053,
+      "completion_tokens": 15727,
+      "reference_fix_observation": null,
+      "network_source_commands": [],
+      "external_read_requests": [],
+      "patch_files": [
+        "django/db/models/sql/compiler.py"
+      ],
+      "official": {
+        "resolved": false,
+        "patch_successfully_applied": true,
+        "tests": {
+          "FAIL_TO_PASS": {
+            "passed": 0,
+            "failed": 2,
+            "failures": [
+              "test_union_with_values_list_and_order (queries.test_qs_combinators.QuerySetSetOperationTests)",
+              "test_union_with_values_list_on_annotated_and_unannotated (queries.test_qs_combinators.QuerySetSetOperationTests)"
+            ]
+          },
+          "PASS_TO_PASS": {
+            "passed": 23,
+            "failed": 0,
+            "failures": []
+          },
+          "FAIL_TO_FAIL": {
+            "passed": 0,
+            "failed": 0,
+            "failures": []
+          },
+          "PASS_TO_FAIL": {
+            "passed": 0,
+            "failed": 0,
+            "failures": []
+          }
+        },
+        "report_path": "evaluation/evaluation_outputs/model-swap-10554-offline-20261119/partial_no_followup/official_eval/logs/run_evaluation/model-swap-10554-offline-20261119-partial_no_followup/qwen3.8-flash-partial_no_followup/django__django-10554/report.json"
+      },
+      "graded_patch_matches_raw_output": true,
+      "raw_test_log_review": {
+        "path": "evaluation/evaluation_outputs/model-swap-10554-offline-20261119/partial_no_followup/official_eval/logs/run_evaluation/model-swap-10554-offline-20261119-partial_no_followup/qwen3.8-flash-partial_no_followup/django__django-10554/test_output.txt",
+        "existing_target_explicitly_ok": true,
+        "merged_status_lines": [
+          "test_union_with_values_list_and_order (queries.test_qs_combinators.QuerySetSetOperationTests) ... test_union_with_values_list_on_annotated_and_unannotated (queries.test_qs_combinators.QuerySetSetOperationTests) ... ok"
+        ],
+        "failure_evidence": [
+          "django.db.utils.DatabaseError: ORDER BY term does not match any column in the result set."
+        ],
+        "interpretation": "Official target counts are preserved. A merged unittest status line causes the actually passing existing target to be omitted/misclassified; the new ordering target still fails, so resolved remains false."
+      }
+    }
+  },
+  "limits": [
+    "Single previously inspected development case; no general repair-rate claim.",
+    "Only the solver model changed; proxy and followup checker retain their original models.",
+    "No generated behavior-test module, hand-edited model patch or gold patch supplied to solver.",
+    "Ordinary CodeAct testing remains available; model may choose to create its own tests.",
+    "Model is a provider alias; returned model IDs are recorded, exact internal weights not independently verified."
+  ]
+}

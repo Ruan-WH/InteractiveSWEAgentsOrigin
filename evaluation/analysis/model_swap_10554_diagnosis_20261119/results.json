@@ -1,0 +1,1026 @@
+{
+  "question_modules_unchanged_from_9208606": true,
+  "experiments": {
+    "environment-only": {
+      "status": "graded",
+      "followups": 1,
+      "exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        },
+        {
+          "question": "What exact queryset expressions and evaluation steps (including the union, order_by, and re-evaluation that raised ProgrammingError) were executed after the shown qs result?",
+          "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+        }
+      ],
+      "responses": 100,
+      "finish_reasons": {
+        "tool_calls": 100
+      },
+      "reasoning_tokens": 0,
+      "prompt_tokens": 5717455,
+      "completion_tokens": 19937,
+      "cached_prompt_tokens": 5575936,
+      "tool_names": {
+        "execute_bash": 97,
+        "str_replace_editor": 3
+      },
+      "invalid_tool_args": [],
+      "source_freeze_intact": true,
+      "same_fixture_as_previous": true,
+      "literal_public_handoff": true,
+      "history_cleanup_verified": true,
+      "workspace_alignment": {
+        "workspace": "/workspace/django__django__3",
+        "installed_path": "/testbed",
+        "single_source_tree": true,
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "import_probe": {
+          "module_path": "/testbed/django/__init__.py"
+        },
+        "python_version": "Python 3.6.13 :: Anaconda, Inc."
+      },
+      "repair_progress": null,
+      "network_audit": [
+        {
+          "id": "d63090c8c1c3b6dbfd13aedecdd2a28e45f971a744d02b7b0853bada235e3949",
+          "networks": [
+            "ambig-swe-eval-offline-20261119"
+          ],
+          "internal": true,
+          "external_tcp_blocked": true
+        }
+      ],
+      "patch_matches_official_prediction": true,
+      "patch_files": [
+        "diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py"
+      ],
+      "resolved": false,
+      "finalization_error": null,
+      "target_successes": 0,
+      "target_failures": 2,
+      "regression_successes": 23,
+      "regression_failures": 0,
+      "solver_error": "RuntimeError: Agent reached maximum iteration in headless mode. Current iteration: 100, max iteration: 100",
+      "raw_output": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/environment-only/partial_followup/output.jsonl",
+      "grader_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/environment-only/partial_followup/official_eval/logs/run_evaluation/model-swap-10554-diagnosis-20261119-environment-only-partial_followup/qwen3.8-flash-partial_followup/django__django-10554/report.json"
+    },
+    "evidence-workflow": {
+      "status": "infrastructure_aborted",
+      "followups": 1,
+      "exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        },
+        {
+          "question": "What exact queryset operation(s) and evaluation produced `django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list` after the shown successful `qs` output?",
+          "answer": "The derived-queryset expression is qs.order_by().values_list('pk', flat=True). The source displays its result as <QuerySet [16, 11, 10, 17]>. The first display of the original qs succeeds. After the derived queryset has been evaluated, displaying the original qs again fails. The report places the failure on the original qs, not on the displayed derived result."
+        }
+      ],
+      "responses": 78,
+      "finish_reasons": {
+        "tool_calls": 78
+      },
+      "reasoning_tokens": 0,
+      "prompt_tokens": 2440155,
+      "completion_tokens": 11891,
+      "cached_prompt_tokens": 2351360,
+      "tool_names": {
+        "execute_bash": 43,
+        "str_replace_editor": 38
+      },
+      "invalid_tool_args": [],
+      "source_freeze_intact": true,
+      "same_fixture_as_previous": true,
+      "literal_public_handoff": true,
+      "history_cleanup_verified": true,
+      "workspace_alignment": {
+        "workspace": "/workspace/django__django__3",
+        "installed_path": "/testbed",
+        "single_source_tree": true,
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "import_probe": {
+          "module_path": "/testbed/django/__init__.py"
+        },
+        "python_version": "Python 3.6.13 :: Anaconda, Inc."
+      },
+      "repair_progress": null,
+      "network_audit": [
+        {
+          "id": "3fa1e758484110d2a18a3e9180ec156ff7a64960d8423d5a67e396476176f438",
+          "networks": [
+            "ambig-swe-diagnosis-evidence-20261119"
+          ],
+          "internal": true,
+          "external_tcp_blocked": true
+        }
+      ],
+      "patch_matches_official_prediction": null,
+      "patch_files": [],
+      "resolved": null,
+      "finalization_error": "Patch extraction failed: CalledProcessError: Command '['docker', 'exec', '--workdir', '/workspace/django__django__3', '3fa1e758484110d2a18a3e9180ec156ff7a64960d8423d5a67e396476176f438', 'sh', '-c', 'git add -A && git -c core.pager=cat diff --binary 14d026cccb144c6877294ba4cd4e03ebf0842498']' returned non-zero exit status 1.",
+      "target_successes": null,
+      "target_failures": null,
+      "regression_successes": null,
+      "regression_failures": null,
+      "solver_error": "HTTPConnectionPool(host='172.21.0.10', port=31294): Max retries exceeded with url: /execute_action (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7ca618cdaea0>: Failed to establish a new connection: [Errno 113] No route to host'))",
+      "raw_output": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-workflow/partial_followup/output.jsonl",
+      "grader_report": null
+    },
+    "evidence-thinking": {
+      "status": "infrastructure_aborted",
+      "followups": 2,
+      "exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        },
+        {
+          "question": "What exact QuerySet operations and arguments were applied to `qs` (including the `union` and `order_by` calls) that led to the subsequent evaluation raising `django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list`?",
+          "answer": "The source uses Dimension, combines pk__in=[10, 11] with pk__in=[16, 17] using union, and includes ordering on the order field. The derived-queryset expression is qs.order_by().values_list('pk', flat=True). The source displays its result as <QuerySet [16, 11, 10, 17]>."
+        },
+        {
+          "question": "After `qs.order_by().values_list('pk', flat=True)` returns `<QuerySet [16, 11, 10, 17]>`, what exact operation/evaluation (including any re-evaluation of `qs` or chained `union`/`order_by` call and arguments) is performed that raises `django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list`?",
+          "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+        }
+      ],
+      "responses": 23,
+      "finish_reasons": {
+        "tool_calls": 23
+      },
+      "reasoning_tokens": 7843,
+      "prompt_tokens": 304452,
+      "completion_tokens": 9436,
+      "cached_prompt_tokens": 271616,
+      "tool_names": {
+        "str_replace_editor": 14,
+        "execute_bash": 9
+      },
+      "invalid_tool_args": [],
+      "source_freeze_intact": true,
+      "same_fixture_as_previous": true,
+      "literal_public_handoff": true,
+      "history_cleanup_verified": true,
+      "workspace_alignment": {
+        "workspace": "/workspace/django__django__3",
+        "installed_path": "/testbed",
+        "single_source_tree": true,
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "import_probe": {
+          "module_path": "/testbed/django/__init__.py"
+        },
+        "python_version": "Python 3.6.13 :: Anaconda, Inc."
+      },
+      "repair_progress": null,
+      "network_audit": [
+        {
+          "id": "8bc4ca829d3a2b6b451f689b282be4e3a76cff046720e09df4a5bd083ff6c0f5",
+          "networks": [
+            "ambig-swe-diagnosis-thinking-20261119"
+          ],
+          "internal": true,
+          "external_tcp_blocked": true
+        }
+      ],
+      "patch_matches_official_prediction": null,
+      "patch_files": [],
+      "resolved": null,
+      "finalization_error": "Patch extraction failed: CalledProcessError: Command '['docker', 'exec', '--workdir', '/workspace/django__django__3', '8bc4ca829d3a2b6b451f689b282be4e3a76cff046720e09df4a5bd083ff6c0f5', 'sh', '-c', 'git add -A && git -c core.pager=cat diff --binary 14d026cccb144c6877294ba4cd4e03ebf0842498']' returned non-zero exit status 1.",
+      "target_successes": null,
+      "target_failures": null,
+      "regression_successes": null,
+      "regression_failures": null,
+      "solver_error": "HTTPConnectionPool(host='172.22.0.10', port=31627): Max retries exceeded with url: /execute_action (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7b01cc3101d0>: Failed to establish a new connection: [Errno 113] No route to host'))",
+      "raw_output": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-thinking/partial_followup/output.jsonl",
+      "grader_report": null
+    },
+    "evidence-thinking-v2": {
+      "status": "graded",
+      "followups": 1,
+      "exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        },
+        {
+          "question": "What exact queryset operations—including the union calls and the order_by argument applied to the derived queryset—were executed after the successful qs evaluation, and what was the subsequent failing observation/traceback showing \"ORDER BY position 4 is not in select list\"?",
+          "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+        }
+      ],
+      "responses": 98,
+      "finish_reasons": {
+        "tool_calls": 95,
+        "stop": 3
+      },
+      "reasoning_tokens": 204295,
+      "prompt_tokens": 4606629,
+      "completion_tokens": 215667,
+      "cached_prompt_tokens": 4448256,
+      "tool_names": {
+        "str_replace_editor": 54,
+        "execute_bash": 42,
+        "web_read": 1
+      },
+      "invalid_tool_args": [],
+      "source_freeze_intact": true,
+      "same_fixture_as_previous": true,
+      "literal_public_handoff": true,
+      "history_cleanup_verified": true,
+      "workspace_alignment": {
+        "workspace": "/workspace/django__django__3",
+        "installed_path": "/testbed",
+        "single_source_tree": true,
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "import_probe": {
+          "module_path": "/testbed/django/__init__.py"
+        },
+        "python_version": "Python 3.6.13 :: Anaconda, Inc."
+      },
+      "repair_progress": null,
+      "network_audit": [
+        {
+          "id": "b7edadc055240453ba996bf221101dd305fc2184e26dc52435d732c1c80642f4",
+          "networks": [
+            "ambig-swe-diagnosis-thinking-20261119"
+          ],
+          "internal": true,
+          "external_tcp_blocked": true
+        }
+      ],
+      "patch_matches_official_prediction": true,
+      "patch_files": [
+        "diff --git a/tests/queries/test_repro5.py b/tests/queries/test_repro5.py"
+      ],
+      "resolved": false,
+      "finalization_error": null,
+      "target_successes": 0,
+      "target_failures": 2,
+      "regression_successes": 23,
+      "regression_failures": 0,
+      "solver_error": "RuntimeError: Agent reached maximum iteration in headless mode. Current iteration: 100, max iteration: 100",
+      "raw_output": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-thinking-v2/partial_followup/output.jsonl",
+      "grader_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-thinking-v2/partial_followup/official_eval/logs/run_evaluation/model-swap-10554-diagnosis-20261119-evidence-thinking-v2-partial_followup/qwen3.8-flash-partial_followup/django__django-10554/report.json"
+    },
+    "evidence-workflow-v2": {
+      "status": "graded",
+      "followups": 1,
+      "exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        },
+        {
+          "question": "What exact intervening operations on qs—the union/order_by calls and the subsequent re-evaluation—and the resulting failing observation/traceback produced the ProgrammingError: ORDER BY position 4 is not in select list?",
+          "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+        }
+      ],
+      "responses": 92,
+      "finish_reasons": {
+        "tool_calls": 92
+      },
+      "reasoning_tokens": 0,
+      "prompt_tokens": 3260638,
+      "completion_tokens": 10401,
+      "cached_prompt_tokens": 3155712,
+      "tool_names": {
+        "execute_bash": 85,
+        "str_replace_editor": 7
+      },
+      "invalid_tool_args": [],
+      "source_freeze_intact": true,
+      "same_fixture_as_previous": true,
+      "literal_public_handoff": true,
+      "history_cleanup_verified": true,
+      "workspace_alignment": {
+        "workspace": "/workspace/django__django__3",
+        "installed_path": "/testbed",
+        "single_source_tree": true,
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "import_probe": {
+          "module_path": "/testbed/django/__init__.py"
+        },
+        "python_version": "Python 3.6.13 :: Anaconda, Inc."
+      },
+      "repair_progress": null,
+      "network_audit": [
+        {
+          "id": "064eb4f45a482c91ee44597361fe97dec6665296b9d51ac4804a4ea70d0479cd",
+          "networks": [
+            "ambig-swe-diagnosis-evidence-20261119"
+          ],
+          "internal": true,
+          "external_tcp_blocked": true
+        }
+      ],
+      "patch_matches_official_prediction": true,
+      "patch_files": [
+        "diff --git a/repro.py b/repro.py",
+        "diff --git a/repro2.py b/repro2.py",
+        "diff --git a/repro3.py b/repro3.py",
+        "diff --git a/repro4.py b/repro4.py",
+        "diff --git a/repro5.py b/repro5.py",
+        "diff --git a/repro6.py b/repro6.py"
+      ],
+      "resolved": false,
+      "finalization_error": null,
+      "target_successes": 0,
+      "target_failures": 2,
+      "regression_successes": 23,
+      "regression_failures": 0,
+      "solver_error": "AgentStuckInLoopError: Agent got stuck in a loop",
+      "raw_output": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-workflow-v2/partial_followup/output.jsonl",
+      "grader_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-workflow-v2/partial_followup/official_eval/logs/run_evaluation/model-swap-10554-diagnosis-20261119-evidence-workflow-v2-partial_followup/qwen3.8-flash-partial_followup/django__django-10554/report.json"
+    },
+    "evidence-preserved": {
+      "status": "graded",
+      "followups": 1,
+      "exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        },
+        {
+          "question": "What exact queryset operations were executed after the initial qs display—specifically the union/order_by calls with arguments and the subsequent evaluation—that produced the ProgrammingError, and what was the verbatim traceback?",
+          "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+        }
+      ],
+      "responses": 96,
+      "finish_reasons": {
+        "tool_calls": 96
+      },
+      "reasoning_tokens": 70623,
+      "prompt_tokens": 6710083,
+      "completion_tokens": 86416,
+      "cached_prompt_tokens": 6542080,
+      "tool_names": {
+        "execute_bash": 62,
+        "str_replace_editor": 38
+      },
+      "invalid_tool_args": [],
+      "source_freeze_intact": true,
+      "same_fixture_as_previous": true,
+      "literal_public_handoff": true,
+      "history_cleanup_verified": true,
+      "workspace_alignment": {
+        "workspace": "/workspace/django__django__3",
+        "installed_path": "/testbed",
+        "single_source_tree": true,
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "import_probe": {
+          "module_path": "/testbed/django/__init__.py"
+        },
+        "python_version": "Python 3.6.13 :: Anaconda, Inc."
+      },
+      "repair_progress": null,
+      "network_audit": [
+        {
+          "id": "d2e5e0783d86108dcaee3d7f0f0d38f28822886257d86086a739a115486bd4c2",
+          "networks": [
+            "ambig-swe-diagnosis-preserved-20261119"
+          ],
+          "internal": true,
+          "external_tcp_blocked": true
+        }
+      ],
+      "patch_matches_official_prediction": true,
+      "patch_files": [
+        "diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py"
+      ],
+      "resolved": false,
+      "finalization_error": null,
+      "target_successes": 0,
+      "target_failures": 2,
+      "regression_successes": 23,
+      "regression_failures": 0,
+      "solver_error": "RuntimeError: Agent reached maximum iteration in headless mode. Current iteration: 100, max iteration: 100",
+      "raw_output": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-preserved/partial_followup/output.jsonl",
+      "grader_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-preserved/partial_followup/official_eval/logs/run_evaluation/model-swap-10554-diagnosis-20261119-evidence-preserved-partial_followup/qwen3.8-flash-partial_followup/django__django-10554/report.json"
+    },
+    "evidence-composition": {
+      "status": "graded",
+      "followups": 1,
+      "exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        },
+        {
+          "question": "Please provide the exact interactive commands after the shown `>>> qs` output that apply the union and ordering and then re-evaluate the original queryset, along with the resulting traceback showing `ORDER BY position 4 is not in select list`.",
+          "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+        }
+      ],
+      "responses": 100,
+      "finish_reasons": {
+        "tool_calls": 100
+      },
+      "reasoning_tokens": 73770,
+      "prompt_tokens": 6550426,
+      "completion_tokens": 94992,
+      "cached_prompt_tokens": 6407168,
+      "tool_names": {
+        "str_replace_editor": 45,
+        "execute_bash": 55
+      },
+      "invalid_tool_args": [],
+      "source_freeze_intact": true,
+      "same_fixture_as_previous": true,
+      "literal_public_handoff": true,
+      "history_cleanup_verified": true,
+      "workspace_alignment": {
+        "workspace": "/workspace/django__django__3",
+        "installed_path": "/testbed",
+        "single_source_tree": true,
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "import_probe": {
+          "module_path": "/testbed/django/__init__.py"
+        },
+        "python_version": "Python 3.6.13 :: Anaconda, Inc."
+      },
+      "repair_progress": null,
+      "network_audit": [
+        {
+          "id": "4e8846c6309ec39e8f0d05cf5892c0966b8a145e2d3e8d3f9bfb83255a735521",
+          "networks": [
+            "ambig-swe-diagnosis-composition-20261119"
+          ],
+          "internal": true,
+          "external_tcp_blocked": true
+        }
+      ],
+      "patch_matches_official_prediction": true,
+      "patch_files": [
+        "diff --git a/django/db/models/query.py b/django/db/models/query.py",
+        "diff --git a/reproduce.py b/reproduce.py",
+        "diff --git a/tests/queries/test_union_mutation.py b/tests/queries/test_union_mutation.py"
+      ],
+      "resolved": false,
+      "finalization_error": null,
+      "target_successes": 0,
+      "target_failures": 2,
+      "regression_successes": 23,
+      "regression_failures": 0,
+      "solver_error": "RuntimeError: Agent reached maximum iteration in headless mode. Current iteration: 100, max iteration: 100",
+      "raw_output": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-composition/partial_followup/output.jsonl",
+      "grader_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-composition/partial_followup/official_eval/logs/run_evaluation/model-swap-10554-diagnosis-20261119-evidence-composition-partial_followup/qwen3.8-flash-partial_followup/django__django-10554/report.json"
+    },
+    "evidence-readable": {
+      "status": "graded",
+      "followups": 1,
+      "exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        },
+        {
+          "question": "What exact queryset operations were applied after the shown `qs` result (including the union/order_by/re-evaluation steps) and what was the resulting failing output or traceback?",
+          "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+        }
+      ],
+      "responses": 91,
+      "finish_reasons": {
+        "tool_calls": 91
+      },
+      "reasoning_tokens": 52728,
+      "prompt_tokens": 4752194,
+      "completion_tokens": 67395,
+      "cached_prompt_tokens": 4614144,
+      "tool_names": {
+        "str_replace_editor": 41,
+        "execute_bash": 49,
+        "finish": 1
+      },
+      "invalid_tool_args": [],
+      "source_freeze_intact": true,
+      "same_fixture_as_previous": true,
+      "literal_public_handoff": true,
+      "history_cleanup_verified": true,
+      "workspace_alignment": {
+        "workspace": "/workspace/django__django__3",
+        "installed_path": "/testbed",
+        "single_source_tree": true,
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "import_probe": {
+          "module_path": "/testbed/django/__init__.py"
+        },
+        "python_version": "Python 3.6.13 :: Anaconda, Inc."
+      },
+      "repair_progress": null,
+      "network_audit": [
+        {
+          "id": "4fb83067512b9821660a305d909d219e88814131fcc9a06d29da8400a423ec00",
+          "networks": [
+            "ambig-swe-diagnosis-readable-20261119"
+          ],
+          "internal": true,
+          "external_tcp_blocked": true
+        }
+      ],
+      "patch_matches_official_prediction": true,
+      "patch_files": [
+        "diff --git a/django/db/models/query.py b/django/db/models/query.py",
+        "diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py"
+      ],
+      "resolved": false,
+      "finalization_error": null,
+      "target_successes": 0,
+      "target_failures": 2,
+      "regression_successes": 23,
+      "regression_failures": 0,
+      "solver_error": null,
+      "raw_output": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-readable/partial_followup/output.jsonl",
+      "grader_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-readable/partial_followup/official_eval/logs/run_evaluation/model-swap-10554-diagnosis-20261119-evidence-readable-partial_followup/qwen3.8-flash-partial_followup/django__django-10554/report.json"
+    },
+    "evidence-sampled": {
+      "status": "tool_bridge_interrupted",
+      "followups": 1,
+      "exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        },
+        {
+          "question": "What exact sequence of queryset operations (the union/order_by/re-evaluation calls) was executed against `qs`, and what was the resulting failing observation or traceback for `ORDER BY position 4 is not in select list`?",
+          "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+        }
+      ],
+      "responses": 51,
+      "finish_reasons": {
+        "tool_calls": 51
+      },
+      "reasoning_tokens": 41714,
+      "prompt_tokens": 2382999,
+      "completion_tokens": 50977,
+      "cached_prompt_tokens": 2272000,
+      "tool_names": {
+        "execute_bash": 34,
+        "str_replace_editor": 18,
+        "bash": 1
+      },
+      "invalid_tool_args": [],
+      "source_freeze_intact": true,
+      "same_fixture_as_previous": true,
+      "literal_public_handoff": true,
+      "history_cleanup_verified": true,
+      "workspace_alignment": {
+        "workspace": "/workspace/django__django__3",
+        "installed_path": "/testbed",
+        "single_source_tree": true,
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "import_probe": {
+          "module_path": "/testbed/django/__init__.py"
+        },
+        "python_version": "Python 3.6.13 :: Anaconda, Inc."
+      },
+      "repair_progress": null,
+      "network_audit": [
+        {
+          "id": "f51b4f3a432c2a9c86f616fe9d26a9b7c64f414d76a46d5d2842f066702e5f73",
+          "networks": [
+            "ambig-swe-diagnosis-sampled-20261119"
+          ],
+          "internal": true,
+          "external_tcp_blocked": true
+        }
+      ],
+      "patch_matches_official_prediction": true,
+      "patch_files": [
+        "diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py"
+      ],
+      "resolved": false,
+      "finalization_error": null,
+      "target_successes": 0,
+      "target_failures": 2,
+      "regression_successes": 0,
+      "regression_failures": 23,
+      "solver_error": "RuntimeError: There was an unexpected error while running the agent. Please report this error to the developers. Your session ID is default. Error type: KeyError",
+      "raw_output": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-sampled/partial_followup/output.jsonl",
+      "grader_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-sampled/partial_followup/official_eval/logs/run_evaluation/model-swap-10554-diagnosis-20261119-evidence-sampled-partial_followup/qwen3.8-flash-partial_followup/django__django-10554/report.json"
+    },
+    "evidence-retrieved": {
+      "status": "graded",
+      "followups": 1,
+      "exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        },
+        {
+          "question": "What exact sequence of queryset operations—including the union calls, any order_by, and the subsequent query evaluation—produced the ProgrammingError, and what result did that evaluation show?",
+          "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+        }
+      ],
+      "responses": 100,
+      "finish_reasons": {
+        "tool_calls": 100
+      },
+      "reasoning_tokens": 70668,
+      "prompt_tokens": 6811379,
+      "completion_tokens": 86105,
+      "cached_prompt_tokens": 6629120,
+      "tool_names": {
+        "execute_bash": 60,
+        "str_replace_editor": 40
+      },
+      "invalid_tool_args": [],
+      "source_freeze_intact": true,
+      "same_fixture_as_previous": true,
+      "literal_public_handoff": true,
+      "history_cleanup_verified": true,
+      "workspace_alignment": {
+        "workspace": "/workspace/django__django__3",
+        "installed_path": "/testbed",
+        "single_source_tree": true,
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "import_probe": {
+          "module_path": "/testbed/django/__init__.py"
+        },
+        "python_version": "Python 3.6.13 :: Anaconda, Inc."
+      },
+      "repair_progress": null,
+      "network_audit": null,
+      "patch_matches_official_prediction": true,
+      "patch_files": [
+        "diff --git a/reproduce.py b/reproduce.py"
+      ],
+      "resolved": false,
+      "finalization_error": null,
+      "target_successes": 0,
+      "target_failures": 2,
+      "regression_successes": 23,
+      "regression_failures": 0,
+      "solver_error": "RuntimeError: Agent reached maximum iteration in headless mode. Current iteration: 100, max iteration: 100",
+      "raw_output": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-retrieved/partial_followup/output.jsonl",
+      "grader_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-retrieved/partial_followup/official_eval/logs/run_evaluation/model-swap-10554-diagnosis-20261119-evidence-retrieved-partial_followup/qwen3.8-flash-partial_followup/django__django-10554/report.json"
+    },
+    "evidence-contrastive": {
+      "status": "graded",
+      "followups": 1,
+      "exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        },
+        {
+          "question": "What exact session commands construct the union of pk__in=[10, 11] and pk__in=[16, 17], apply order_by on \"order\", and re-evaluate qs, along with the resulting traceback showing django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list?",
+          "answer": "The source uses Dimension, combines pk__in=[10, 11] with pk__in=[16, 17] using union, and includes ordering on the order field. First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+        }
+      ],
+      "responses": 100,
+      "finish_reasons": {
+        "tool_calls": 100
+      },
+      "reasoning_tokens": 81122,
+      "prompt_tokens": 6320656,
+      "completion_tokens": 102142,
+      "cached_prompt_tokens": 6148608,
+      "tool_names": {
+        "str_replace_editor": 48,
+        "execute_bash": 52
+      },
+      "invalid_tool_args": [],
+      "source_freeze_intact": true,
+      "same_fixture_as_previous": true,
+      "literal_public_handoff": true,
+      "history_cleanup_verified": true,
+      "workspace_alignment": {
+        "workspace": "/workspace/django__django__3",
+        "installed_path": "/testbed",
+        "single_source_tree": true,
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "import_probe": {
+          "module_path": "/testbed/django/__init__.py"
+        },
+        "python_version": "Python 3.6.13 :: Anaconda, Inc."
+      },
+      "repair_progress": null,
+      "network_audit": [
+        {
+          "id": "ce70a421cdf1fc41049e36d8dbea796577217edd76383df87bb0a5d209dd843a",
+          "internal": true,
+          "networks": [
+            "ambig-swe-diagnosis-contrastive-20261119"
+          ],
+          "external_tcp_blocked": true
+        }
+      ],
+      "patch_matches_official_prediction": true,
+      "patch_files": [
+        "diff --git a/reproduce.py b/reproduce.py"
+      ],
+      "resolved": false,
+      "finalization_error": null,
+      "target_successes": 0,
+      "target_failures": 2,
+      "regression_successes": 23,
+      "regression_failures": 0,
+      "solver_error": "RuntimeError: Agent reached maximum iteration in headless mode. Current iteration: 100, max iteration: 100",
+      "raw_output": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-contrastive/partial_followup/output.jsonl",
+      "grader_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-contrastive/partial_followup/official_eval/logs/run_evaluation/model-swap-10554-diagnosis-20261119-evidence-contrastive-partial_followup/qwen3.8-flash-partial_followup/django__django-10554/report.json"
+    },
+    "evidence-minimal": {
+      "status": "empty_patch_grading_skipped",
+      "followups": 1,
+      "exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        },
+        {
+          "question": "What exact queryset operations were executed after the shown successful `qs` output—including the union arguments, the `order_by(...)` call, and how the original queryset was re-evaluated—to produce the `ORDER BY position 4 is not in select list` error?",
+          "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+        }
+      ],
+      "responses": 100,
+      "finish_reasons": {
+        "tool_calls": 100
+      },
+      "reasoning_tokens": 44549,
+      "prompt_tokens": 5270592,
+      "completion_tokens": 55895,
+      "cached_prompt_tokens": 5121536,
+      "tool_names": {
+        "str_replace_editor": 41,
+        "execute_bash": 59
+      },
+      "invalid_tool_args": [],
+      "source_freeze_intact": true,
+      "same_fixture_as_previous": true,
+      "literal_public_handoff": true,
+      "history_cleanup_verified": true,
+      "workspace_alignment": {
+        "workspace": "/workspace/django__django__3",
+        "installed_path": "/testbed",
+        "single_source_tree": true,
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "import_probe": {
+          "module_path": "/testbed/django/__init__.py"
+        },
+        "python_version": "Python 3.6.13 :: Anaconda, Inc."
+      },
+      "repair_progress": null,
+      "network_audit": null,
+      "patch_matches_official_prediction": true,
+      "patch_files": [],
+      "resolved": null,
+      "finalization_error": null,
+      "target_successes": null,
+      "target_failures": null,
+      "regression_successes": null,
+      "regression_failures": null,
+      "solver_error": "RuntimeError: Agent reached maximum iteration in headless mode. Current iteration: 100, max iteration: 100",
+      "raw_output": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-minimal/partial_followup/output.jsonl",
+      "grader_report": null
+    },
+    "evidence-bash": {
+      "status": "graded",
+      "followups": 1,
+      "exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        },
+        {
+          "question": "Please provide the exact statements executed on `qs` after the displayed successful evaluation—specifically the `union`/`order_by` calls and the next query evaluation—that produced `ProgrammingError: ORDER BY position 4 is not in select list`.",
+          "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+        }
+      ],
+      "responses": 100,
+      "finish_reasons": {
+        "tool_calls": 100
+      },
+      "reasoning_tokens": 37030,
+      "prompt_tokens": 3601924,
+      "completion_tokens": 46074,
+      "cached_prompt_tokens": 3476992,
+      "tool_names": {
+        "execute_bash": 100
+      },
+      "invalid_tool_args": [],
+      "source_freeze_intact": true,
+      "same_fixture_as_previous": true,
+      "literal_public_handoff": true,
+      "history_cleanup_verified": true,
+      "workspace_alignment": {
+        "workspace": "/workspace/django__django__3",
+        "installed_path": "/testbed",
+        "single_source_tree": true,
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "import_probe": {
+          "module_path": "/testbed/django/__init__.py"
+        },
+        "python_version": "Python 3.6.13 :: Anaconda, Inc."
+      },
+      "repair_progress": null,
+      "network_audit": [
+        {
+          "id": "d1d66fb9da41c0a15525709728e5ad369b0d23078c83a3d0eba66566b3d35ea8",
+          "internal": true,
+          "networks": [
+            "ambig-swe-diagnosis-bash-20261119"
+          ],
+          "external_tcp_blocked": true
+        }
+      ],
+      "patch_matches_official_prediction": true,
+      "patch_files": [
+        "diff --git a/tests/queries/test_repro.py b/tests/queries/test_repro.py"
+      ],
+      "resolved": false,
+      "finalization_error": null,
+      "target_successes": 0,
+      "target_failures": 2,
+      "regression_successes": 23,
+      "regression_failures": 0,
+      "solver_error": "RuntimeError: Agent reached maximum iteration in headless mode. Current iteration: 100, max iteration: 100",
+      "raw_output": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-bash/partial_followup/output.jsonl",
+      "grader_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-bash/partial_followup/official_eval/logs/run_evaluation/model-swap-10554-diagnosis-20261119-evidence-bash-partial_followup/qwen3.8-flash-partial_followup/django__django-10554/report.json"
+    },
+    "max-bash-comparison": {
+      "status": "provider_account_interrupted",
+      "followups": 1,
+      "exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        },
+        {
+          "question": "What exact operation/sequence after the shown successful `qs` evaluation applied `order_by`/`union` and then re-evaluated the queryset, and what was the resulting traceback?",
+          "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+        }
+      ],
+      "responses": 38,
+      "finish_reasons": {
+        "tool_calls": 38
+      },
+      "reasoning_tokens": 68029,
+      "prompt_tokens": 2048629,
+      "completion_tokens": 76599,
+      "cached_prompt_tokens": 1946112,
+      "tool_names": {
+        "execute_bash": 46
+      },
+      "invalid_tool_args": [],
+      "source_freeze_intact": true,
+      "same_fixture_as_previous": true,
+      "literal_public_handoff": true,
+      "history_cleanup_verified": true,
+      "workspace_alignment": {
+        "workspace": "/workspace/django__django__3",
+        "installed_path": "/testbed",
+        "single_source_tree": true,
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "import_probe": {
+          "module_path": "/testbed/django/__init__.py"
+        },
+        "python_version": "Python 3.6.13 :: Anaconda, Inc."
+      },
+      "repair_progress": null,
+      "network_audit": [
+        {
+          "id": "44039edf2408bc483572870ebc5e13632e9fdd04108854a88e52b19fb82162cb",
+          "internal": true,
+          "networks": [
+            "ambig-swe-diagnosis-max-comparison-20261119"
+          ],
+          "external_tcp_blocked": true
+        }
+      ],
+      "patch_matches_official_prediction": true,
+      "patch_files": [
+        "diff --git a/tests/queries/test_repro_tmp.py b/tests/queries/test_repro_tmp.py"
+      ],
+      "resolved": false,
+      "finalization_error": null,
+      "target_successes": 0,
+      "target_failures": 2,
+      "regression_successes": 23,
+      "regression_failures": 0,
+      "solver_error": "RuntimeError: There was an unexpected error while running the agent. Please report this error to the developers. Your session ID is default. Error type: APIError",
+      "raw_output": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/max-bash-comparison/partial_followup/output.jsonl",
+      "grader_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/max-bash-comparison/partial_followup/official_eval/logs/run_evaluation/model-swap-10554-diagnosis-20261119-max-bash-comparison-partial_followup/qwen3.8-max-partial_followup/django__django-10554/report.json"
+    },
+    "evidence-progress": {
+      "status": "graded",
+      "followups": 1,
+      "exchanges": [
+        {
+          "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+          "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+        },
+        {
+          "question": "What exact commands were run after the successful `>>> qs` output to combine the querysets with union and order_by, and what did the subsequent failing query/traceback show?",
+          "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+        }
+      ],
+      "responses": 91,
+      "finish_reasons": {
+        "tool_calls": 91
+      },
+      "reasoning_tokens": 56557,
+      "prompt_tokens": 4716789,
+      "completion_tokens": 70246,
+      "cached_prompt_tokens": 4569088,
+      "tool_names": {
+        "execute_bash": 100
+      },
+      "invalid_tool_args": [],
+      "source_freeze_intact": true,
+      "same_fixture_as_previous": true,
+      "literal_public_handoff": true,
+      "history_cleanup_verified": true,
+      "workspace_alignment": {
+        "workspace": "/workspace/django__django__3",
+        "installed_path": "/testbed",
+        "single_source_tree": true,
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "import_probe": {
+          "module_path": "/testbed/django/__init__.py"
+        },
+        "python_version": "Python 3.6.13 :: Anaconda, Inc."
+      },
+      "repair_progress": {
+        "policy": "read-streak-v1",
+        "threshold": 8,
+        "interventions": [
+          {
+            "completed_tools": 8,
+            "consecutive_reads": 8,
+            "text": "<repair_progress_checkpoint>\nThe last 8 completed tool actions only read text. You have not obtained new execution evidence in this interval. Pause source browsing. Make the next action run a focused check using the public issue and Q/A, or an existing relevant repository test. If the reported sequence already passes on this baseline, record that fact and test a hypothesis that distinguishes a remaining allowed operation combination. Use actual execution output to choose the next source edit; do not fabricate a failure, alter backend capabilities, discard ordering, or fetch upstream fixes. Keep budget for a production change and verification. This is a process reminder, not additional issue evidence.\n</repair_progress_checkpoint>"
+          },
+          {
+            "completed_tools": 25,
+            "consecutive_reads": 8,
+            "text": "<repair_progress_checkpoint>\nThe last 8 completed tool actions only read text. You have not obtained new execution evidence in this interval. Pause source browsing. Make the next action run a focused check using the public issue and Q/A, or an existing relevant repository test. If the reported sequence already passes on this baseline, record that fact and test a hypothesis that distinguishes a remaining allowed operation combination. Use actual execution output to choose the next source edit; do not fabricate a failure, alter backend capabilities, discard ordering, or fetch upstream fixes. Keep budget for a production change and verification. This is a process reminder, not additional issue evidence.\n</repair_progress_checkpoint>"
+          },
+          {
+            "completed_tools": 34,
+            "consecutive_reads": 8,
+            "text": "<repair_progress_checkpoint>\nThe last 8 completed tool actions only read text. You have not obtained new execution evidence in this interval. Pause source browsing. Make the next action run a focused check using the public issue and Q/A, or an existing relevant repository test. If the reported sequence already passes on this baseline, record that fact and test a hypothesis that distinguishes a remaining allowed operation combination. Use actual execution output to choose the next source edit; do not fabricate a failure, alter backend capabilities, discard ordering, or fetch upstream fixes. Keep budget for a production change and verification. This is a process reminder, not additional issue evidence.\n</repair_progress_checkpoint>"
+          },
+          {
+            "completed_tools": 47,
+            "consecutive_reads": 8,
+            "text": "<repair_progress_checkpoint>\nThe last 8 completed tool actions only read text. You have not obtained new execution evidence in this interval. Pause source browsing. Make the next action run a focused check using the public issue and Q/A, or an existing relevant repository test. If the reported sequence already passes on this baseline, record that fact and test a hypothesis that distinguishes a remaining allowed operation combination. Use actual execution output to choose the next source edit; do not fabricate a failure, alter backend capabilities, discard ordering, or fetch upstream fixes. Keep budget for a production change and verification. This is a process reminder, not additional issue evidence.\n</repair_progress_checkpoint>"
+          },
+          {
+            "completed_tools": 66,
+            "consecutive_reads": 8,
+            "text": "<repair_progress_checkpoint>\nThe last 8 completed tool actions only read text. You have not obtained new execution evidence in this interval. Pause source browsing. Make the next action run a focused check using the public issue and Q/A, or an existing relevant repository test. If the reported sequence already passes on this baseline, record that fact and test a hypothesis that distinguishes a remaining allowed operation combination. Use actual execution output to choose the next source edit; do not fabricate a failure, alter backend capabilities, discard ordering, or fetch upstream fixes. Keep budget for a production change and verification. This is a process reminder, not additional issue evidence.\n</repair_progress_checkpoint>"
+          }
+        ]
+      },
+      "network_audit": null,
+      "patch_matches_official_prediction": true,
+      "patch_files": [
+        "diff --git a/tests/queries/test_repro2.py b/tests/queries/test_repro2.py"
+      ],
+      "resolved": false,
+      "finalization_error": null,
+      "target_successes": 0,
+      "target_failures": 2,
+      "regression_successes": 23,
+      "regression_failures": 0,
+      "solver_error": "RuntimeError: Agent reached maximum iteration in headless mode. Current iteration: 100, max iteration: 100",
+      "raw_output": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/evidence-progress/partial_followup/output.jsonl",
+      "grader_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/grader_controls/autonomous-flash-progress-offline/logs/run_evaluation/10554-diagnosis-controls-20261119-autonomous-flash-progress-offline/autonomous-flash-progress-offline/django__django-10554/report.json"
+    }
+  },
+  "usage_summary": {
+    "scope": "Successful repair responses saved in this diagnosis folder only; excludes initial clarification/checker/proxy/failed API attempts and separate native controls; not a billing estimate",
+    "responses": 1258,
+    "prompt_tokens": 65495000,
+    "completion_tokens": 1004173,
+    "cached_prompt_tokens": 63529728
+  },
+  "own_trace_consolidation": {
+    "scope": "Autonomous own-trace consolidation development trial, using only parent public history; no researcher-provided failure probe or localized source",
+    "model": "qwen3.8-max",
+    "parent_completed_tools": 41,
+    "synthesis_model_calls": 1,
+    "target_successes": 0,
+    "regression_successes": 23,
+    "resolved": false,
+    "official_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/grader_controls/own-max-consolidation40-offline/logs/run_evaluation/10554-diagnosis-controls-20261119-own-max-consolidation40-offline/own-max-consolidation40-offline/django__django-10554/report.json",
+    "raw_patch": "own-max-consolidation40.patch",
+    "native_observation": "Returned to combined-query cloning hypothesis, despite parent observations of ordered-projection failure.",
+    "budget_limit": "Synthesis thinking16384 vs parent4096; not equal-token comparison."
+  },
+  "assisted_max_control": {
+    "scope": "Assisted Qwen Max capability control, NOT autonomous partial success and NOT Flash success",
+    "model": "qwen3.8-max",
+    "benchmark_resolved": true,
+    "target_success": 2,
+    "regression_success": 23,
+    "raw_patch_sha256": "572a40747571f604b96a9047b30265203ffc281f895118116cc3b9682341dac9",
+    "candidate_exactly_matches_prediction_and_applied_patch": true,
+    "official_report": "/home/rwh/Ambig-SWE-Origin/InteractiveSWEAgents/evaluation/evaluation_outputs/model-swap-10554-diagnosis-20261119/grader_controls/focused-max-same-feedback-offline/logs/run_evaluation/10554-diagnosis-controls-20261119-focused-max-same-feedback-offline/focused-max-same-feedback-offline/django__django-10554/report.json",
+    "input_messages_identical_to_flash_round4": true,
+    "assistance": "Public task/Q&A + localized baseline method bodies + independent public SQLite observations + previous candidate and public execution feedback. No reference patch or hidden-test feedback supplied.",
+    "evaluation_retry": "First grader terminated on SSL fetching dependency lists; second used exact same environment-commit Git blobs for those HTTP responses; reused existing image and unchanged official tests/parser.",
+    "limits": "Single development case; expanded tuple-shape tests still fail, so this is benchmark success, not a general complete Django ORM fix.",
+    "official_eval_script_identical_to_gold_control": true,
+    "eval_script_sha256": "4f4b7d33a33c2a089b11ed7351e09cd6d320243ddcfafc237a42da1b7af0c27b"
+  }
+}

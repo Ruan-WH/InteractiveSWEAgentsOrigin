@@ -1,0 +1,46 @@
+{
+  "protocol": "localization-assisted-diagnostic-only",
+  "model": "qwen3.8-flash",
+  "not_standard_pipeline": true,
+  "source_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+  "public_input": {
+    "task_summary": "There is an issue with combining querysets using union operations in Django, particularly when ordering is applied to derived querysets. This results in a programming error during query execution, as the ordering position is not included in the select list. The problem arises when attempting to re-evaluate the original queryset after applying an order_by operation, leading to a traceback error. The issue may be related to a previously reported problem.",
+    "public_exchanges": [
+      {
+        "question": "Can you provide a minimal code example that reproduces this issue with union operations and ordering?",
+        "answer": "The report uses a Dimension queryset named qs, combining the pk__in=[10, 11] and pk__in=[16, 17] queries with union, with ordering on the \"order\" field. The reported exception is django.db.utils.ProgrammingError: ORDER BY position 4 is not in select list.\n\nThe source does not provide the Dimension model definition or a standalone database setup. The following is an excerpt of the reported interactive session, using that existing qs:\n\n```pycon\n>>> qs\n<QuerySet [<Dimension: boeksoort>, <Dimension: grootboek>, <Dimension: kenteken>, <Dimension: activa>]>\n```"
+      },
+      {
+        "question": "What exact operations were performed after the successful `qs` display—including the union/order_by calls and the subsequent query or evaluation—that triggered the `ProgrammingError: ORDER BY position 4 is not in select list`?",
+        "answer": "First displaying qs succeeds. Then evaluate qs.order_by().values_list('pk', flat=True). Display the original qs again; that second display fails with the reported error."
+      }
+    ]
+  },
+  "response": {
+    "observation": "The issue occurs because `Query.clone()` performs a shallow copy of `__dict__`, which means `combined_queries` (a tuple containing references to the original sub-query objects) is shared between the original query and its clones. When `get_combinator_sql` compiles sub-queries, it can mutate the original query objects stored in `combined_queries` (e.g., through `set_values` or other operations during compilation). This causes subsequent evaluations of the original queryset to fail because the sub-queries' select lists have been altered.\n\nThe fix is to clone each query in `combined_queries` before using it in `get_combinator_sql`, ensuring that the original query objects are never mutated during compilation of the combinator.",
+    "edits": [
+      {
+        "path": "django/db/models/sql/compiler.py",
+        "old_str": "    def get_combinator_sql(self, combinator, all):\n        features = self.connection.features\n        compilers = [\n            query.get_compiler(self.using, self.connection)\n            for query in self.query.combined_queries if not query.is_empty()\n        ]",
+        "new_str": "    def get_combinator_sql(self, combinator, all):\n        features = self.connection.features\n        compilers = [\n            query.get_compiler(self.using, self.connection)\n            for query in self.query.combined_queries if not query.is_empty()\n        ]\n        # Clone the combined queries to avoid mutating the original query\n        # objects stored in combined_queries during compilation.\n        for compiler in compilers:\n            compiler.query = compiler.query.clone()"
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 4435,
+    "prompt_tokens": 7945,
+    "total_tokens": 12380,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 4096,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 4435
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "text_tokens": 7945
+    }
+  }
+}

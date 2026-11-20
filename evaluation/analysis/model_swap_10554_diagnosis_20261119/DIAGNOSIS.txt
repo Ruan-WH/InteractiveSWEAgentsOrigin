@@ -1,0 +1,85 @@
+10554：100 步耗尽的证据与诊断设计（进行中）
+
+已验证的事实：
+1. 原启动脚本 cp -r /testbed 到工作目录；editable install 仍指向 /testbed。
+   从工作目录运行脚本时可能导入工作目录源码，从 /tmp 或 tests 运行时可能导入 /testbed。
+   旧 partial 不追问轨迹中，agent 第 33 步发现此问题，此后多次重复同步、诊断导入和验证。
+2. 旧 partial 追问的 100 个工具响应中，没有生产代码编辑；只留下 8 个复现脚本。
+   第 30 步开始写第一个复现脚本；第 34 步的“成功”用 list(qs)，会缓存原 queryset，
+   因而再次 list(qs) 不能验证重新执行 SQL。直到第 93/94 步才专门尝试 repr 的实际序列。
+   从轨迹事件 189 可见，repr -> 派生查询求值 -> repr 在基线上仍成功。
+   不应把所有复现失败都归咎于缓存：独立的正确序列也在基线上通过。
+3. 旧 ideal 98 个工具动作中，首次生产代码编辑位于第 91 步。
+   剩余预算不足，最后用 continue 丢弃排序项，造成结果排序错误。
+4. 独立隔离容器预检：公开顺序 repr(qs) -> list(qs.order_by().values_list('pk', flat=True))
+   -> repr(qs) 在 baseline 成功，排序数据刻意与主键顺序不同；基线现有组合查询测试 26 项通过（2 skipped）。
+   这说明公开报告的原始触发序列并不是本基线一个直接失败的完整复现，不能强制模型无限复现它。
+5. 新的独立官方 grader 控制：gold resolved=True、目标 2/2、回归 23/23。
+   baseline resolved=False、报告目标 0/2、回归 23/23。后者仍有已知测试名拼行解析问题，需看原始日志。
+   gold 仅在独立 grader 容器使用，不提供给修复 agent。
+6. 旧新模型配置关闭 enable_thinking；不能把这个条件下的失败等同于模型的能力上限。
+   新的非 benchmark 两轮工具探针确认开启思考可返回合法工具调用并继续回答。
+   当前 CodeAct 不回传 reasoning_content；诊断采用 preserve_thinking=false 和每轮 4096 思考预算，
+   不宣称评估完整的跨轮思考保留能力。官方参数文档链接保存在 thinking_probe.json。
+
+诊断实验（均保留原始问答、追问模块、无外网及基线 Git 清理）：
+- environment-only：统一 /testbed 与工作目录为同一源码，纠正 /repo，说明实际测试入口；不开启思考。
+- evidence-workflow：在同样环境中增加通用修复指引：区分实测与假设、考虑缓存、避免无限重复复现，
+  对公开需求允许的相近操作寻找可测失败，保留实现和验证预算；不开启思考。
+- evidence-thinking：同 evidence-workflow，仅开启同一模型的有限思考预算。
+
+限制：这是单个已知开发 case 的诊断，不是预注册独立效果评估。
+不能从单条成功轨迹直接声称追问的因果收益；成功还需审查是否实际使用追问提供的操作信息。
+不能把环境修复、提示指引和思考模式的联合效果全部归给追问模块。
+完整动作、观测和机械计数分别见 *.actions.json、*.trajectory.txt、trajectory_audit.json。
+
+补充兼容性诊断：
+- evidence-workflow-v2 关闭思考，92 个模型响应后被循环检测终止，官方未修复、回归 23/23。
+- 两个 v1 并行运行被旧 DockerRuntime 全局 atexit 清理中断，不计模型失败。
+  已改为该评测进程仅清理拥有的容器，后续 v2 实验正常独立存活。
+- pinned LiteLLM 的 OpenAI response converter 丢弃 reasoning_content；CodeAct Message 也未保留它。
+  已加入显式 preserve_thinking=true 才启用的 Qwen SDK 兼容路径及工具消息字段保留。
+  真实 LLM -> CodeAct -> 下一轮 API 探针逐字回传成功，相关 142 项测试通过。
+- evidence-preserved 使用相同模型、预算及通用指引，启用思考状态保留；其他条件保持原 transport。
+
+公开操作组合控制（public_composition_controls.json）：
+- 在自行构造的最小 SQLite Dimension 模型中，报告顺序在 baseline、辅助定位模型补丁、gold 上都通过。
+- 同一 qs 保留显式排序后 values_list('pk', flat=True)：baseline 与辅助模型补丁报 DatabaseError，gold 保持正确排序。
+- 这是独立研究控制，不向 agent 提供该脚本、gold 补丁或隐藏测试。
+- 源报告没有 Dimension 定义和数据库设置，因此上述结果不证明所有原始 PostgreSQL/完整模型环境都无法触发；
+  它证明现有公开回答不能直接构成当前环境的完整失败复现，且与仍失败的 API 组合有差别。
+- evidence-composition 在相同模型/公开 Q/A 上加入开发 case 反馈得到的 API 组合语义指引，
+  不包含实现路径、参考补丁、隐藏测试名/数据。此条件不是未经人工指导的通用追问收益证明。
+
+2026-11-19 后续诊断（辅助能力实验与标准 partial 严格分开）：
+- minimal-v1 100 次模型响应中，粗略机械分类有 81 次源码读取、19 次执行或其他动作，编辑工具修改为 0。
+  原始 git_patch 为空；官方 harness 跳过空补丁，不能伪报为实际执行了目标 0/2。
+- bash-v1 已核对真实首次请求只有 execute_bash、finish 两个工具；运行中外网 TCP 隔离预检通过。
+- 新增 public_operation_matrix.py：基于此前公开两字段 Dimension，组合所选字段、正反排序、
+  先投影/先排序、flat=True/False，共 32 项；无隐藏测试、参考实现或上游源码。
+  baseline 通过 16/32；辅助 round2 候选通过 18/32，现有公开组合测试 26 项通过（2 skipped）。
+  候选不仅遗漏先投影再排序，也遗漏 pk 别名和返回形状的兼容；这解释了单个复现通过为何不代表完整修复。
+- 将该独立实测矩阵反馈给同一模型的 round3 已启动，结果仍属于辅助诊断，不是自主 partial 成功。
+
+辅助 round3:24/32，round4:20/32；两者均破坏公开 test_order_raises_on_non_selected_column，不是成功。
+Max 辅助对照与 Flash round4 的 messages 逐字相同，仍待结果。
+新增 opt-in progress-v1：真实源码阅读连续8次才追加过程提醒；无新执行工具或测试生成。
+相关36项单元检查通过；此前只查最新3条请求，不足以判断首次10次是否有提醒；全量请求审计确认第5次已有提醒（被忽略），第17、26次提醒后运行现有测试。尚不能宣称修复收益。
+
+重要正控制：Max 同输入辅助补丁官方 resolved=True、目标2/2、回归23/23。
+原始补丁与提交及实际应用字节相同，见 assisted_max_success_proof.json。
+该结果不是自主 partial 成功，也不是 Flash 成功；额外 tuple 形状检查仍失败，不宣称通用修复。
+
+progress-v1 终局：100控制器步、91次响应、5次8连读提醒；只有复现文件，无生产编辑。
+原grader SSL退出，使用同一环境提交依赖Git blobs离线重跑官方harness：目标0/2、回归23/23，resolved=False。
+新对照 own-max-consolidation40：首次已有>=40完成工具动作的请求实际为41动作/第34次响应；
+仅重排该父运行自身公开消息，165124字符，无外部定位/辅助检查。
+经两次自动审批拒绝后，用户明确允许该一次已核验payload重发；只发一次，无供应商重试。
+修改阶段思考预算提升到16384，因此成功也不能单独归因于格式整合。结果待执行验证。
+
+Max 自主组后续被上游 Arrearage/Access denied 中断：38个模型响应、约45控制器步，
+仅有临时复现测试，无生产代码修改。不得当作完整100步模型失败。
+用户表示暂时无法恢复账户，要求先整理已有结果；不再发起新模型调用。
+已授权且已发出的 own-max-consolidation40 单次请求仍等待原句柄返回，无重发。
+另查到执行反馈隐患：Flash进度提醒组3次、Max自主组2次测试输出FAILED但shell exit0，
+与测试命令通过tail/sed管道截取输出有关；这是可改进的反馈呈现问题，尚无因果收益实验。

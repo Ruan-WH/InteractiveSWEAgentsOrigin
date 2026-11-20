@@ -1,0 +1,59 @@
+{
+  "real_container_cleanup": {
+    "protocol": "baseline-only-git-v1",
+    "repositories": [
+      {
+        "path": "/workspace/audit",
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "tree": "b3f2ad248aec2b040a5860e6ddc4c27db4329b5b",
+        "prior_reachable_commits": 48863,
+        "remaining_commits": [
+          "14d026cccb144c6877294ba4cd4e03ebf0842498"
+        ],
+        "remaining_objects": 8344,
+        "source_unchanged": true,
+        "remotes": [],
+        "git_diff_available": true
+      },
+      {
+        "path": "/testbed",
+        "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+        "tree": "b3f2ad248aec2b040a5860e6ddc4c27db4329b5b",
+        "prior_reachable_commits": 48863,
+        "remaining_commits": [
+          "14d026cccb144c6877294ba4cd4e03ebf0842498"
+        ],
+        "remaining_objects": 8344,
+        "source_unchanged": true,
+        "remotes": [],
+        "git_diff_available": true
+      }
+    ],
+    "runtime_instance": {
+      "path": "/swe_util/eval_data/instances/swe-bench-instance.json",
+      "remaining_keys": [
+        "base_commit",
+        "instance_id",
+        "repo",
+        "version"
+      ],
+      "removed_keys": [
+        "patch",
+        "test_patch"
+      ]
+    },
+    "verified": true
+  },
+  "reference_object_checks": [
+    {
+      "root": "/testbed",
+      "reference_commit_missing": true
+    },
+    {
+      "root": "/workspace/audit",
+      "reference_commit_missing": true
+    }
+  ],
+  "model_calls": 0,
+  "image_modified": false
+}

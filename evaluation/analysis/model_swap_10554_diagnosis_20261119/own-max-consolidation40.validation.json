@@ -1,0 +1,10 @@
+{
+  "source_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+  "diagnostic_only": false,
+  "response_file": "evaluation/analysis/model_swap_10554_diagnosis_20261119/own-max-consolidation40/response.json",
+  "verification_scope": "existing-baseline-tests-only",
+  "apply_exit": 0,
+  "apply_output": "",
+  "existing_tests_exit": 0,
+  "existing_tests_output": "Creating test database for alias 'default'...\n.............s..........s.Testing against Django installed in '/testbed/django'\nSystem check identified no issues (1 silenced).\n\n----------------------------------------------------------------------\nRan 26 tests in 0.017s\n\nOK (skipped=2)\nDestroying test database for alias 'default'...\n"
+}
